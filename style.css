@@ -39,8 +39,8 @@ body {
     display: flex;
     /* アイコンやタイトルの間隔 */
     gap: 20px;
-    /* 上下の位置を中央に揃える */
-    align-items: center;
+    /* タイトルのベースラインに合わせるため下揃えに変更 */
+    align-items: flex-end;
     /* ヘッダーの下側の隙間 */
     margin-bottom: 15px;
 }
@@ -52,6 +52,17 @@ body {
     font-size: 2.4em;
     /* タイトルの文字色（薄いクリーム色） */
     color: #b2955c; 
+}
+
+.app-description {
+    /* 文字を小さくする */
+    font-size: 0.85em;
+    /* 文字の色（タイトルより少し濃い茶色） */
+    color: #8d6e63;
+    /* 行間を少し詰める */
+    line-height: 1.4;
+    /* 下側の位置を微調整 */
+    padding-bottom: 5px;
 }
 
 .main-container {
