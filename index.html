@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ドット絵制作補助ツール</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="header">
+        <h2 class="app-title">ドット絵制作補助ツール</h2>
+    </div>
+
+    <div class="main-container">
+        <div id="viewport">
+            <canvas id="mainCanvas"></canvas>
+            <div id="dropZone" class="viewport-overlay">
+                <div id="uploadPrompt" class="upload-container">
+                    <label for="imageInput" class="upload-label">
+                        <span class="upload-text-main">ここにドット絵にしたい画像をドロップ</span>
+                        <span class="upload-text-sub">または</span>
+                        <span class="upload-text-main">クリックしてファイルを選択</span>
+                    </label>
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+
+            <div class="control-panel">
+                <div class="controls">
+                    <div id="aspectButtons" class="button-grid">
+                        <button class="toggle-btn active" data-value="16:9">
+                            <span class="ratio-box r-16-9"></span>
+                            <span class="ratio-text">16:9</span>
+                        </button>
+                        <button class="toggle-btn" data-value="4:3">
+                            <span class="ratio-box r-4-3"></span>
+                            <span class="ratio-text">4:3</span>
+                        </button>
+                        <button class="toggle-btn" data-value="1:1">
+                            <span class="ratio-box r-1-1"></span>
+                            <span class="ratio-text">1:1</span>
+                        </button>
+                        <button class="toggle-btn" data-value="3:4">
+                            <span class="ratio-box r-3-4"></span>
+                            <span class="ratio-text">3:4</span>
+                        </button>
+                        <button class="toggle-btn" data-value="9:16">
+                            <span class="ratio-box r-9-16"></span>
+                            <span class="ratio-text">9:16</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="controls">
+                    <div id="resButtons" class="button-grid">
+                        <button class="toggle-btn active" data-value="30x18">
+                            <div class="res-grid-icon grid-1x1"><span></span></div>
+                        </button>
+                        <button class="toggle-btn" data-value="50x28">
+                            <div class="res-grid-icon grid-2x2"><span></span><span></span><span></span><span></span>
+                            </div>
+                        </button>
+                        <button class="toggle-btn" data-value="100x56">
+                            <div class="res-grid-icon grid-3x3">
+                                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                        </button>
+                        <button class="toggle-btn" data-value="150x84">
+                            <div class="res-grid-icon grid-4x4">
+                                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+      
+            <div id="uiPanel" class="palette-group">
+                <div id="uiHeader" class="palette-header"></div>
+                <div id="uiColors" class="palette-colors"></div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script src="palette.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
