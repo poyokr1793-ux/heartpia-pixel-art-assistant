@@ -320,10 +320,19 @@ function renderFocusHighlight(offX, offY, dotSize) {
 // ==========================================
 // 5. 操作イベント (Interaction Handlers)
 // ==========================================
+// ==========================================
+// 5. 操作イベント (Interaction Handlers)
+// ==========================================
 
 function handleZoom(delta, centerX, centerY) {
     const oldScale = state.scale;
-    state.scale = Math.max(0.1, Math.min(state.scale * (delta > 0 ? 0.97 : 1.03), 20));
+    
+    // スマホのピンチ操作（deltaが小さい）とPCのホイール（deltaが大きい）で感度を最適化
+    // speedを調整し、スマホでのピンチイン・アウトをより滑らかにします
+    const speed = Math.abs(delta) < 1 ? 0.05 : 0.03;
+    const zoomFactor = delta > 0 ? (1 - speed) : (1 + speed);
+    
+    state.scale = Math.max(0.1, Math.min(state.scale * zoomFactor, 20));
     const ratio = state.scale / oldScale;
 
     const nextX = centerX - (centerX - state.offsetX) * ratio;
@@ -354,7 +363,10 @@ const moveDrag = (x, y) => {
 };
 
 const endDrag = (x, y) => {
-    if (state.isDragging && state.totalMoved < 5) {
+    // 判定しきい値を 5 から 15 に引き上げます
+    // これにより、スマホ操作時のわずかな指のズレが「ドラッグ」とみなされず、
+    // 軽いタップだけで色選択（強調）が反応するようになります
+    if (state.isDragging && state.totalMoved < 15) {
         const rect = canvas.getBoundingClientRect();
         const dotSize = state.baseDotSize * state.scale;
         const dotX = Math.floor((x - rect.left - state.offsetX) / dotSize);
