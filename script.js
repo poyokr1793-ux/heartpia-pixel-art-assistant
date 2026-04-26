@@ -342,7 +342,7 @@ function handleZoom(delta, centerX, centerY) {
     requestDraw();
 }
 
-const startDrag = (x, y) => {
+const starftDrag = (x, y) => {
     state.isDragging = true;
     state.dragStart = { x: x - state.offsetX, y: y - state.offsetY };
     state.totalMoved = 0;
@@ -496,24 +496,45 @@ window.onmouseup = e => endDrag(e.clientX, e.clientY);
 
 viewport.ontouchstart = e => {
     if (e.target.closest('#uploadPrompt')) return;
-    if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    else if (e.touches.length === 2) {
+    if (e.target.id === 'mainCanvas') e.preventDefault();
+    if (e.touches.length === 1) {
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    } else if (e.touches.length === 2) {
         state.isDragging = false;
-        state.lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        state.lastPinchDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
     }
 };
+
 window.ontouchmove = e => {
-    if (e.touches.length === 1 && state.isDragging) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-    else if (e.touches.length === 2) {
+    if (e.touches.length === 1 && state.isDragging) {
+        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    } else if (e.touches.length === 2) {
         e.preventDefault();
-        const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        handleZoom((state.lastPinchDist - dist) * 2, (e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
+        const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        handleZoom((state.lastPinchDist - dist) * 4, 
+            (e.touches[0].clientX + e.touches[1].clientX) / 2, 
+            (e.touches[0].clientY + e.touches[1].clientY) / 2
+        );
         state.lastPinchDist = dist;
     }
 };
+
 window.ontouchend = e => {
     if (e.touches.length < 2) state.lastPinchDist = 0;
-    if (e.changedTouches.length === 1 && state.totalMoved < 5 && !state.lastPinchDist) endDrag(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+    if (e.changedTouches.length === 1 && state.isDragging) {
+        if (state.totalMoved < 40) { 
+            endDrag(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        } else {
+            state.isDragging = false;
+            requestDraw();
+        }
+    }
 };
 
 document.querySelectorAll('#aspectButtons .toggle-btn').forEach(btn => {
