@@ -316,19 +316,14 @@ function renderFocusHighlight(offX, offY, dotSize) {
     }
     ctx.restore();
 }
+
 // ==========================================
 // 5. 操作イベント (Interaction Handlers)
 // ==========================================
 
 function handleZoom(delta, centerX, centerY) {
     const oldScale = state.scale;
-    
-    // スマホのピンチ（deltaが小さい）時はより敏感に、PCホイール時は標準的に
-    // 係数を 0.05 から 0.08 に上げ、より少ない動きでズームするように調整
-    const speed = Math.abs(delta) < 1 ? 0.08 : 0.03;
-    const zoomFactor = delta > 0 ? (1 - speed) : (1 + speed);
-    
-    state.scale = Math.max(0.1, Math.min(state.scale * zoomFactor, 20));
+    state.scale = Math.max(0.1, Math.min(state.scale * (delta > 0 ? 0.97 : 1.03), 20));
     const ratio = state.scale / oldScale;
 
     const nextX = centerX - (centerX - state.offsetX) * ratio;
@@ -342,7 +337,7 @@ function handleZoom(delta, centerX, centerY) {
     requestDraw();
 }
 
-const starftDrag = (x, y) => {
+const startDrag = (x, y) => {
     state.isDragging = true;
     state.dragStart = { x: x - state.offsetX, y: y - state.offsetY };
     state.totalMoved = 0;
@@ -359,10 +354,7 @@ const moveDrag = (x, y) => {
 };
 
 const endDrag = (x, y) => {
-    // 判定しきい値を 15 から 30 まで大幅に広げます。
-    // これにより、スマホでポンと叩いた際の微細なズレをほぼ確実に「タップ」として許容します。
-    // PCのマウス操作では30ピクセルもズレることはないので、操作感は維持されます。
-    if (state.isDragging && state.totalMoved < 30) {
+    if (state.isDragging && state.totalMoved < 5) {
         const rect = canvas.getBoundingClientRect();
         const dotSize = state.baseDotSize * state.scale;
         const dotX = Math.floor((x - rect.left - state.offsetX) / dotSize);
@@ -496,45 +488,24 @@ window.onmouseup = e => endDrag(e.clientX, e.clientY);
 
 viewport.ontouchstart = e => {
     if (e.target.closest('#uploadPrompt')) return;
-    if (e.target.id === 'mainCanvas' && e.touches.length > 1) e.preventDefault();
-    if (e.touches.length === 1) {
-        startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    } else if (e.touches.length === 2) {
+    if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    else if (e.touches.length === 2) {
         state.isDragging = false;
-        state.lastPinchDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
+        state.lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
     }
 };
-
 window.ontouchmove = e => {
-    if (e.touches.length === 1 && state.isDragging) {
-        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-    } else if (e.touches.length === 2) {
+    if (e.touches.length === 1 && state.isDragging) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    else if (e.touches.length === 2) {
         e.preventDefault();
-        const dist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
-        handleZoom((state.lastPinchDist - dist) * 4, 
-            (e.touches[0].clientX + e.touches[1].clientX) / 2, 
-            (e.touches[0].clientY + e.touches[1].clientY) / 2
-        );
+        const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        handleZoom((state.lastPinchDist - dist) * 2, (e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
         state.lastPinchDist = dist;
     }
 };
-
 window.ontouchend = e => {
     if (e.touches.length < 2) state.lastPinchDist = 0;
-    if (e.changedTouches.length === 1 && state.isDragging) {
-        if (state.totalMoved < 40) { 
-            endDrag(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-        } else {
-            state.isDragging = false;
-            requestDraw();
-        }
-    }
+    if (e.changedTouches.length === 1 && state.totalMoved < 5 && !state.lastPinchDist) endDrag(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
 };
 
 document.querySelectorAll('#aspectButtons .toggle-btn').forEach(btn => {
@@ -556,4 +527,3 @@ window.addEventListener('resize', () => {
 
 document.getElementById('imageInput').onchange = e => processImage(e.target.files[0]);
 updateResButtons("16:9");
-
