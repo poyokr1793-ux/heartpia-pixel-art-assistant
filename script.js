@@ -527,3 +527,40 @@ window.addEventListener('resize', () => {
 
 document.getElementById('imageInput').onchange = e => processImage(e.target.files[0]);
 updateResButtons("16:9");
+// ==========================================
+// 7. メッセージ送信機能 (Discord Webhook)
+// ==========================================
+async function sendToDiscord() {
+    const msgInput = document.getElementById('userMsg');
+    const message = msgInput.value.trim();
+
+    if (!message) {
+        alert("メッセージを入力してください。");
+        return;
+    }
+
+    // ユーザーが作成したWebhook URL
+    const webhookURL = "https://discord.com/api/webhooks/1498062675769294848/s4-73OZa10q3ufKGfN6DbV8p1Q9dM6Sjpbm4AQMM8nnSYS84BaSwhZ3hLH-Bx0B632rR";
+
+    const payload = {
+        content: `【ツールへの要望・メッセージ】\n--------------------------------\n${message}\n--------------------------------`
+    };
+
+    try {
+        const response = await fetch(webhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("メッセージを送信しました！ありがとうございます。");
+            msgInput.value = ""; // 送信成功時に入力欄をクリア
+        } else {
+            alert("送信に失敗しました。URLが正しいか確認するか、時間を置いて試してください。");
+        }
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        alert("通信エラーが発生しました。インターネット接続を確認してください。");
+    }
+}

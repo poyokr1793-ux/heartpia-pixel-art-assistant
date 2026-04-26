@@ -442,3 +442,47 @@ body {
 .upload-label:hover {
     color: #815615;
 }
+/* メッセージ入力エリアのスタイル */
+.msg-container {
+    display: flex;
+    gap: 8px;
+    margin-left: auto; /* 右側に寄せる */
+    align-self: flex-end; /* 説明文の下側に揃える */
+    padding-bottom: 5px;
+}
+
+.msg-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #edd376;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85em;
+    width: 220px;
+    outline: none;
+    color: #5D4037;
+}
+
+.msg-input::placeholder {
+    color: #a3907e;
+}
+
+.msg-send-btn {
+    background: #b2955c;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+}
+
+.msg-send-btn:hover {
+    background: #8d6e63;
+}
+
+.msg-send-btn:active {
+    transform: translateY(1px);
+}
