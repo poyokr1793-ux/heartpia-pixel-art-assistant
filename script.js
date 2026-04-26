@@ -413,35 +413,35 @@ function updateUI(idx) {
     const header = document.getElementById('uiHeader');
     const colors = document.getElementById('uiColors');
 
-    // idx が null の場合はパネルを非表示にして終了
     if (idx === null) {
         panel.classList.remove('is-visible');
         return;
     }
     
-    // idx がある場合はパネルを表示
     panel.classList.add('is-visible');
 
     const info = PALETTE_MAP[idx];
-    const groupNames = Object.keys(RAW_PALETTE);
-    const gIdx = groupNames.indexOf(info.group);
+    const groupKeys = Object.keys(RAW_PALETTE);
+    const gIdx = groupKeys.indexOf(info.group);
 
-    // ヘッダー（グループ移動用チップと現在の色）の更新
+    // ヘッダーの更新
     header.innerHTML = '';
     
-    // 前のグループのチップ
-    header.appendChild(createNavChip(gIdx > 0 ? RAW_PALETTE[groupNames[gIdx - 1]].Header : null));
+    // 前のグループのHeader色
+    const prevHeader = gIdx > 0 ? RAW_PALETTE[groupKeys[gIdx - 1]].Header : null;
+    header.appendChild(createNavChip(prevHeader));
     
-    // 現在のグループのメイン色
+    // 現在のグループのHeader色
     const mid = document.createElement('div');
     mid.className = 'current-group-label';
     mid.style.backgroundColor = `rgb(${RAW_PALETTE[info.group].Header.join(',')})`;
     header.appendChild(mid);
     
-    // 次のグループのチップ
-    header.appendChild(createNavChip(gIdx < groupNames.length - 1 ? RAW_PALETTE[groupNames[gIdx + 1]].Header : null));
+    // 次のグループのHeader色
+    const nextHeader = gIdx < groupKeys.length - 1 ? RAW_PALETTE[groupKeys[gIdx + 1]].Header : null;
+    header.appendChild(createNavChip(nextHeader));
 
-    // カラーリスト（パレット内の全色）の更新
+    // カラーリストの更新
     colors.innerHTML = '';
     RAW_PALETTE[info.group].Colors.forEach((rgb, i) => {
         const box = document.createElement('div');
@@ -462,7 +462,16 @@ function updateUI(idx) {
 function createNavChip(rgb) {
     const div = document.createElement('div');
     div.className = 'nav-color-chip';
-    if (rgb) div.style.backgroundColor = `rgb(${rgb.join(',')})`;
+    if (rgb) {
+        // 色がある時は、背景色を設定し、枠線を白く、不透明度を1にする
+        div.style.backgroundColor = `rgb(${rgb.join(',')})`;
+        div.style.border = '2px solid #fff';
+        div.style.opacity = '1';
+    } else {
+        // 端の場合（rgbがnullの場合）は、枠線も消して完全に透明にする
+        div.style.border = 'none';
+        div.style.backgroundColor = 'transparent';
+    }
     return div;
 }
 

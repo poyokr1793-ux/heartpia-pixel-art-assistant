@@ -277,16 +277,15 @@ body {
 
 .nav-color-chip {
     /* 小さい色の粒（ナビ用）のサイズ */
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     /* 丸くする */
     border-radius: 50%;
-    /* 少し透けさせる（50%） */
-    opacity: 0.5;
-    /* 白い枠線 */
-    border: 1px solid #fff;
+    /* 色を正確に見せるため不透明にする */
+    opacity: 1;
+    /* 真ん中と同じく、しっかりとした白い枠線にする */
+    border: 2px solid #fff;
 }
-
 /* 画像が読み込まれた時に表示するためのクラス */
 .palette-group.is-visible {
     /* 隠れていたパレットを表示する */
