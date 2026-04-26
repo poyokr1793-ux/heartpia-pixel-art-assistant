@@ -496,7 +496,7 @@ window.onmouseup = e => endDrag(e.clientX, e.clientY);
 
 viewport.ontouchstart = e => {
     if (e.target.closest('#uploadPrompt')) return;
-    if (e.target.id === 'mainCanvas') e.preventDefault();
+    if (e.target.id === 'mainCanvas' && e.touches.length > 1) e.preventDefault();
     if (e.touches.length === 1) {
         startDrag(e.touches[0].clientX, e.touches[0].clientY);
     } else if (e.touches.length === 2) {
