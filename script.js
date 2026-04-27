@@ -41,6 +41,7 @@ let state = {
     // 設定
     w: 150,
     h: 84,
+    currentMode: 'normal', // 仕上げモード（そのまま・きれい・なめらか・くっきり）
     baseDotSize: 10,
     focusIdx: null,       // 現在選択中のパレットINDEX
 
@@ -118,19 +119,127 @@ function updateCache() {
         focusBrightness = frgb[0] * 0.299 + frgb[1] * 0.587 + frgb[2] * 0.114;
     }
 
-    // 4. パレット変換とピクセル埋め
+   // 4. パレット変換とピクセル埋め
     const paletteLen = FLAT_PALETTE.length;
+    // 「なめらか」モード用の誤差保持配列（Float32で精度を保つ）
+    const errors = state.currentMode === 'smooth' ? new Float32Array(imgData.length) : null;
+
     for (let i = 0; i < state.w * state.h; i++) {
         const i4 = i * 4;
-        const r = imgData[i4], g = imgData[i4 + 1], b = imgData[i4 + 2];
+        let r = imgData[i4], g = imgData[i4 + 1], b = imgData[i4 + 2];
 
-        let minDist = Infinity, closestIdx = 0;
+        // 「なめらか」モード：1. ふんわり（ぼかし）処理
+        if (state.currentMode === 'smooth') {
+            const x = i % state.w;
+            const y = Math.floor(i / state.w);
+            let count = 1;
+            [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(([dx, dy]) => {
+                const nx = x + dx, ny = y + dy;
+                if (nx >= 0 && nx < state.w && ny >= 0 && ny < state.h) {
+                    const ni4 = (ny * state.w + nx) * 4;
+                    r += imgData[ni4];
+                    g += imgData[ni4 + 1];
+                    b += imgData[ni4 + 2];
+                    count++;
+                }
+            });
+            r /= count; g /= count; b /= count;
+
+          // 2. つぶつぶ（誤差拡散）の加算
+            r += errors[i4];
+            g += errors[i4 + 1];
+            b += errors[i4 + 2];
+        }
+
+        // 「きれい」モード：輪郭の強調（隣接するドットとの明度差を計算）
+        if (state.currentMode === 'clean') {
+            const x = i % state.w;
+            const y = Math.floor(i / state.w);
+            if (x > 0 && x < state.w - 1 && y > 0 && y < state.h - 1) {
+                const up = ((y - 1) * state.w + x) * 4;
+                const down = ((y + 1) * state.w + x) * 4;
+                const left = (y * state.w + (x - 1)) * 4;
+                const right = (y * state.w + (x + 1)) * 4;
+
+                const currentBright = (r + g + b) / 3;
+                const neighborBright = (
+                    (imgData[up] + imgData[up + 1] + imgData[up + 2]) / 3 +
+                    (imgData[down] + imgData[down + 1] + imgData[down + 2]) / 3 +
+                    (imgData[left] + imgData[left + 1] + imgData[left + 2]) / 3 +
+                    (imgData[right] + imgData[right + 1] + imgData[right + 2]) / 3
+                ) / 4;
+
+               const diff = currentBright - neighborBright;
+                // 輪郭部分のコントラストを強める
+                r = Math.max(0, Math.min(255, r + diff * 0.7));
+                g = Math.max(0, Math.min(255, g + diff * 0.7));
+                b = Math.max(0, Math.min(255, b + diff * 0.7));
+            }
+        }
+
+        // 「くっきり」モード：輪郭のさらなる強調
+        if (state.currentMode === 'sharp') {
+            const x = i % state.w;
+            const y = Math.floor(i / state.w);
+            if (x > 0 && x < state.w - 1 && y > 0 && y < state.h - 1) {
+                const up = ((y - 1) * state.w + x) * 4;
+                const down = ((y + 1) * state.w + x) * 4;
+                const left = (y * state.w + (x - 1)) * 4;
+                const right = (y * state.w + (x + 1)) * 4;
+
+                const currentBright = (r + g + b) / 3;
+                const neighborBright = (
+                    (imgData[up] + imgData[up + 1] + imgData[up + 2]) / 3 +
+                    (imgData[down] + imgData[down + 1] + imgData[down + 2]) / 3 +
+                    (imgData[left] + imgData[left + 1] + imgData[left + 2]) / 3 +
+                    (imgData[right] + imgData[right + 1] + imgData[right + 2]) / 3
+                ) / 4;
+
+                const diff = currentBright - neighborBright;
+                // 「きれい」よりもさらに強い係数(1.2)でコントラストを強調
+                r = Math.max(0, Math.min(255, r + diff * 1.2));
+                g = Math.max(0, Math.min(255, g + diff * 1.2));
+                b = Math.max(0, Math.min(255, b + diff * 1.2));
+            }
+        }
+
+      let minDist = Infinity, closestIdx = 0;
         for (let j = 0; j < paletteLen; j++) {
             const p = FLAT_PALETTE[j];
-            const d = Math.pow(r - p[0], 2) + Math.pow(g - p[1], 2) + Math.pow(b - p[2], 2);
-            if (d < minDist) { minDist = d; closestIdx = j; if (d === 0) break; }
+            
+            let d;
+            if (state.currentMode === 'clean') {
+                // 「きれい」モード：緑(G)の重みを増やして、色の濁りを抑える
+                d = Math.pow(r - p[0], 2) + Math.pow(g - p[1], 2) * 1.5 + Math.pow(b - p[2], 2);
+            } else {
+                // 標準：全ての色の差を均等に扱う
+                d = Math.pow(r - p[0], 2) + Math.pow(g - p[1], 2) + Math.pow(b - p[2], 2);
+            }
+
+            if (d < minDist) {
+                minDist = d;
+                closestIdx = j;
+                if (d === 0) break;
+            }
         }
-        state.dots[i] = closestIdx;
+      state.dots[i] = closestIdx;
+
+        // 「なめらか」モード：3. 誤差の算出と拡散
+        if (state.currentMode === 'smooth') {
+            const pr = FLAT_PALETTE[closestIdx][0], pg = FLAT_PALETTE[closestIdx][1], pb = FLAT_PALETTE[closestIdx][2];
+            const errR = r - pr, errG = g - pg, errB = b - pb;
+            const x = i % state.w, y = Math.floor(i / state.w);
+            // 右、左下、下、右下に誤差を配分
+            [[1, 0, 7/16], [-1, 1, 3/16], [0, 1, 5/16], [1, 1, 1/16]].forEach(([dx, dy, weight]) => {
+                const nx = x + dx, ny = y + dy;
+                if (nx >= 0 && nx < state.w && ny >= 0 && ny < state.h) {
+                    const targetI4 = (ny * state.w + nx) * 4;
+                    errors[targetI4] += errR * weight;
+                    errors[targetI4 + 1] += errG * weight;
+                    errors[targetI4 + 2] += errB * weight;
+                }
+            });
+        }
 
         // 色決定（フォーカス外は暗く/明るく）
         const rgb = FLAT_PALETTE[closestIdx];
@@ -392,20 +501,21 @@ function updateResButtons(aspect) {
     
     buttons.forEach((btn, idx) => {
         const opt = options[idx];
-        btn.dataset.value = `${opt.w}x${opt.h}`; // 縦横比と同じdata-valueに統一
+        btn.dataset.value = `${opt.w}x${opt.h}`;
+        
+        // ボタンのクリックイベントを再設定
+        btn.onclick = () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyResolution(btn.dataset.value);
+        };
     });
 
     const activeBtn = container.querySelector('.toggle-btn.active') || buttons[0];
     applyResolution(activeBtn.dataset.value);
 }
 
-document.querySelectorAll('#resButtons .toggle-btn').forEach(btn => {
-    btn.onclick = () => {
-        document.querySelectorAll('#resButtons .toggle-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        applyResolution(btn.dataset.value); // 縦横比と同じプロパティを参照
-    };
-});
+
 
 function updateUI(idx) {
     const panel = document.getElementById('uiPanel');
@@ -529,6 +639,19 @@ document.querySelectorAll('#aspectButtons .toggle-btn').forEach(btn => {
         document.querySelectorAll('#aspectButtons .toggle-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         updateResButtons(btn.dataset.value);
+    };
+});
+
+// モード切り替えボタンのクリックイベント登録
+document.querySelectorAll('#modeButtons .toggle-btn').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('#modeButtons .toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentMode = btn.dataset.value;
+        if (state.img) {
+            updateCache();
+            requestDraw();
+        }
     };
 });
 

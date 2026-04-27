@@ -125,8 +125,8 @@ body {
     overflow: hidden;
     /* 下側の余白を調整してキャンバスと高さを揃える */
     margin-bottom: 5px;
-    /* 各ブロック（比率・精度・パレット）の間の隙間を均等に設定 */
-    gap: 15px;
+    /* 各ブロック（比率・精度・モード・パレット）の間の隙間を均等に設定 */
+    gap: 8px;
 }
 
 /* ==========================================
@@ -240,10 +240,20 @@ body {
 .r-9-16 { width: 13px; aspect-ratio: 9 / 16; }
 
 .ratio-text {
-    font-size: 1.1em;
+    font-size: 1.2em;
     /* 文字の大きさ */
     font-weight: bold;
     /* 文字を太くする */
+}
+
+.mode-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.2;
+}
+/* モード切り替えボタン専用の高さ調整 */
+#modeButtons .toggle-btn {
+    height: 30px;
 }
 
 /* --- カラーパレット (Palette) --- */
