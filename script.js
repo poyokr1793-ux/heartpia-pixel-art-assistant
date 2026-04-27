@@ -323,9 +323,8 @@ function renderFocusHighlight(offX, offY, dotSize) {
 
 function handleZoom(delta, centerX, centerY) {
     const oldScale = state.scale;
-    state.scale = Math.max(0.1, Math.min(state.scale * (delta > 0 ? 0.97 : 1.03), 20));
+    state.scale = Math.max(0.1, Math.min(state.scale * (delta > 0 ? 0.95 : 1.05), 20));
     const ratio = state.scale / oldScale;
-
     const nextX = centerX - (centerX - state.offsetX) * ratio;
     const nextY = centerY - (centerY - state.offsetY) * ratio;
 
@@ -504,6 +503,7 @@ window.onmouseup = e => endDrag(e.clientX, e.clientY);
 
 viewport.ontouchstart = e => {
     if (e.target.closest('#uploadPrompt')) return;
+    e.preventDefault();
     if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
     else if (e.touches.length === 2) {
         state.isDragging = false;
@@ -515,7 +515,7 @@ window.ontouchmove = e => {
     else if (e.touches.length === 2) {
         e.preventDefault();
         const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        handleZoom((state.lastPinchDist - dist) * 2, (e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
+        handleZoom((state.lastPinchDist - dist) * 5, (e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
         state.lastPinchDist = dist;
     }
 };
