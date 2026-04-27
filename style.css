@@ -1,488 +1,530 @@
 /* ==========================================
-   1. Global Settings（全体の共通設定）
-   ========================================== */
+1. Global Settings（全体の共通設定）
+========================================== */
 * {
-    /* ボックスのサイズ計算に、余白や枠線の幅も含める設定（レイアウト崩れ防止） */
+    /* 全ての要素で、サイズ計算に枠線や余白を含める（レイアウト崩れを防ぐおまじない） */
     box-sizing: border-box;
 }
 
 body {
-    /* 画面端の余白 */
-    margin: 0;
-    /* 内側の余白 */
-    padding: 15px;
-    /* 画面全体の背景色 */
-    background: #FFFDE7;
-    /* 全体の文字の色 */
-    color: #5D4037;
-    /* 文字の書体（ゴシック系） */
-    font-family: sans-serif;
-    /* 要素を縦や横に並べるための設定 */
+    /* レイアウト：配置（中身をどう並べるか） */
     display: flex;
-    /* 要素を縦方向に並べる */
+    /* 要素を整列させるモードをオン */
     flex-direction: column;
-    /* 画面の高さをいっぱい（100%）に使う */
+    /* 中身を上から下に縦に並べる */
+    /* レイアウト：サイズ（画面の広さ） */
+    width: 100%;
+    /* 横幅を画面いっぱい（100%）にする */
     height: 100vh;
-    /* 画面からはみ出した部分を隠す（スクロールさせない） */
+    /* 高さを画面の表示領域いっぱい（100%）にする */
+    margin: 0;
+    /* 画面外側の余白をゼロにする */
+    padding: 15px;
+    /* 画面の内側に15pxの余白を作る */
+    /* 見た目（色や文字） */
+    background: #FFFDE7;
+    /* 画面全体の背景色（薄いクリーム色） */
+    color: #5D4037;
+    /* 全体の文字色（濃い茶色） */
+    font-family: sans-serif;
+    /* 文字の形（飾りがないゴシック体） */
+    /* 動作・制御（スクロールなど） */
     overflow: hidden;
-    /* 引っ張った時のバウンス効果を無効化 */
+    /* 画面からはみ出た部分を隠す（スクロールさせない） */
     overscroll-behavior: none;
-    /* 画面の拡大縮小などのタッチ操作を制限 */
+    /* スマホ等で引っ張った時のバウンス効果をオフ */
     touch-action: none;
+    /* 指での拡大縮小などの操作を無効化 */
 }
 
 /* ==========================================
-   2. Layout Structure（画面の骨組み・レイアウト）
-   ========================================== */
+2. Layout Structure（画面の骨組み・レイアウト）
+========================================== */
 .header {
-    /* 中の要素を横に並べる */
     display: flex;
-    /* アイコンやタイトルの間隔 */
-    gap: 20px;
-    /* タイトルのベースラインに合わせるため下揃えに変更 */
+    /* 中身を横に並べる */
     align-items: flex-end;
-    /* ヘッダーの下側の隙間 */
+    /* 中身を下揃えにする */
+    gap: 20px;
+    /* タイトルと説明文の間の隙間を20pxにする */
     margin-bottom: 15px;
+    /* ヘッダーの下側に15pxの隙間を作る */
 }
 
 .app-title {
-    /* タイトルの外側の余白をなくす */
     margin: 0;
-    /* 文字の大きさ */
-    font-size: 2.4em;
-    /* タイトルの文字色（薄いクリーム色） */
-    color: #b2955c; 
+    /* 文字の上下の余白を消す */
+    font-size: 3em;
+    /* 文字の大きさ（標準の2.4倍） */
+    color: #FFD05c;
+    /* タイトルの文字色（金茶色） */
+    font-family:'Mochiy Pop One', sans-serif;
+    /* 全体の縁取り設定 */
+    -webkit-text-stroke: 7px #b0977b; /* 縁の太さと色 */
+    
+    /* 縁を外側に付けるように見せる設定（文字が細くなるのを防ぎます） */
+    paint-order: stroke fill;
 }
 
 .app-description {
-    /* 文字を小さくする */
-    font-size: 0.85em;
-    /* 文字の色（タイトルより少し濃い茶色） */
-    color: #8d6e63;
-    /* 行間を少し詰める */
-    line-height: 1.4;
-    /* 下側の位置を微調整 */
     padding-bottom: 5px;
+    /* 下側に少しだけ隙間を作る */
+    font-size: 0.85em;
+    /* 文字の大きさ（少し小さめ） */
+    line-height: 1.4;
+    /* 行の間隔（1.4倍） */
+    color: #8d6e63;
+    /* 説明文の文字色（少し薄い茶色） */
 }
 
 .main-container {
-    /* 中の要素（キャンバスとパネル）を横に並べる */
     display: flex;
-    /* 画面の残りの高さをすべて使う */
+    /* 左のキャンバスと右のパネルを横に並べる */
     flex: 1;
-    /* キャンバスとパネルの間の隙間 */
+    /* 高さを可能な限り広げる */
     gap: 10px;
-    /* はみ出した部分は表示しない */
+    /* キャンバスとパネルの間の隙間 */
     overflow: hidden;
+    /* はみ出した部分は表示しない */
 }
 
 #viewport {
-    /* 可能な限り横幅を広げる */
-    flex: 1;
-    /* 子要素の基準点にする設定 */
     position: relative;
-    /* キャンバス部分の背景色（黄色系） */
-    background-color: #F6ECC3;
-    /* 背景の模様（斜め線）の設定 */
-    background-image: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 5px,
-        #F3E6B5 5px,
-        #F3E6B5 10px
-    );
-    /* 角の丸み（かなり丸くする） */
-    border-radius: 20px;
-    /* 枠からはみ出た画像を隠す */
-    overflow: hidden;
-    /* マウスカーソルを「掴む」手の形にする */
-    cursor: grab;
-    /* キャンバスの太い枠線（額縁のような部分） */
-    border: 7px solid #edd376; 
-    /* 下側のわずかな隙間 */
+    /* 子要素（アップロード画面）を配置する際の基準にする */
+    flex: 1;
+    /* 横幅を可能な限り広げる */
     margin-bottom: 5px;
+    /* 下側に5pxの隙間を作る */
+    /* 見た目：背景・枠線 */
+    background-color: #F6ECC3;
+    /* キャンバス内の背景色 */
+    background-image: repeating-linear-gradient(45deg,
+            transparent,
+            transparent 5px,
+            #F3E6B5 5px,
+            #F3E6B5 10px);
+    /* 背景に45度の斜め線を引く設定 */
+    border: 7px solid #edd376;
+    /* 7pxの太い枠線（色：黄色系） */
+    border-radius: 20px;
+    /* 角を20px分、丸める */
+    /* 制御 */
+    overflow: hidden;
+    /* 枠からはみ出た画像を隠す */
+    cursor: grab;
+    /* マウスを乗せた時に「掴む手」の形にする */
 }
 
 .side-panel {
-    /* 横幅を280ピクセルに固定 */
-    width: 280px;
-    /* パネル自体の背景をなしにする（透明） */
-    background: none;
-    /* パネル内の内側余白 */
-    padding: 0 15px 15px 15px;
-    /* 角の丸み（背景がないので目立たない） */
-    border-radius: 8px;
-    /* 中の要素（ボタンなど）を縦に並べる */
     display: flex;
     flex-direction: column;
-    /* 要素同士の間隔 */
-    gap: 10px;
-    /* 項目が多いときに縦スクロールを出す */
-    overflow-y: auto;
+    width: 280px;
+    padding: 0 15px;
+    /* パネル自体の高さを100%に固定し、中身がはみ出さないようにする */
+    height: 100%;
+    overflow: hidden;
+    /* 下側の余白を調整してキャンバスと高さを揃える */
+    margin-bottom: 5px;
+    /* 各ブロック（比率・精度・パレット）の間の隙間を均等に設定 */
+    gap: 15px;
 }
 
 /* ==========================================
-   3. Common UI Components（共通のパーツ：ボタンなど）
-   ========================================== */
+3. Common UI Components（共通のパーツ：ボタンなど）
+========================================== */
 .control-panel {
-    /* パーツの背景色（ベージュ系） */
-    background: #E2CAA9;
-    /* 内側の余白 */
-    padding: 8px;
-    /* 角の丸み */
-    border-radius: 6px;
-    /* 中の要素を中央に揃える */
     display: flex;
+    /* 中身を横に並べる */
     align-items: center;
-    /* パーツの太い枠線 */
-    border: 7px solid #C5AB8B; 
+    /* 上下中央に揃える */
+    padding: 0;
+    /* 内側の余白をゼロにする */
+    background: none;
+    /* 背景なし */
+    border: none;
+    /* 枠線なし */
 }
 
 .control-panel:first-child {
     margin-top: 0px;
+    /* 一番最初のパネルの上の隙間をゼロにする */
 }
 
 .controls {
-    /* ボタンなどを縦に並べる */
     display: flex;
     flex-direction: column;
-    /* 横幅いっぱいにする */
     width: 100%;
+    height: 100%;
+    /* 【重要】各要素の間に10pxの隙間を確実に作る */
+    gap: 10px;
 }
 
 .button-grid {
-    /* ボタンを横に並べる */
     display: flex;
-    /* 折り返さずに横一列にする */
     flex-wrap: nowrap;
-    /* ボタン同士の隙間 */
+    /* ボタンを折り返さずに1列にする */
     gap: 4px;
-    /* 横幅いっぱいにする */
+    /* ボタン同士の隙間を4pxにする */
     width: 100%;
 }
 
 .toggle-btn {
-    /* 横幅を均等に分ける */
-    flex: 1;
-    /* ボタンの通常時の色（ダークグレー） */
-    background: #ffffff;
-    /* ボタンの細い枠線 */
-    border: 3px solid #b5874b;
-    /* ボタンの文字色（白） */
-    color: #8a6b4f;
-    /* ボタン内の余白 */
-    padding: 2px;
-    /* ボタンの高さ */
-    height: 60px;
-    /* ボタンの角の丸み */
-    border-radius: 4px;
-    /* カーソルをポインター（指先）にする */
-    cursor: pointer;
-    /* 変化するときのアニメーション時間 */
-    transition: all 0.2s;
-    /* 幅が狭くなりすぎないようにする設定 */
-    min-width: 0;
-    /* 中のアイコンと文字を縦に並べる */
+    /* 配置 */
     display: flex;
     flex-direction: column;
-    /* 上下左右中央に配置する */
+    /* アイコンと文字を縦に並べる */
     align-items: center;
+    /* 左右中央揃え */
     justify-content: center;
-    /* アイコンと文字の間隔 */
+    /* 上下中央揃え */
+    flex: 1;
+    /* 横幅をボタン同士で均等に分ける */
     gap: 4px;
+    /* アイコンと文字の間の隙間 */
+    /* サイズ */
+    min-width: 0;
+    /* 横幅が狭くなっても潰れないようにする設定 */
+    height: 60px;
+    /* ボタンの高さを60pxにする */
+    padding: 2px;
+    /* ボタン内の余白 */
+    /* 見た目 */
+    background: #CEAB94;
+    /* 通常時の背景色（白） */
+    color: #ffffff;
+    /* 通常時の文字・アイコンの色（茶色） */
+    border: 3px solid #BA8D6E;
+    /* 3pxの枠線（色：黄土色） */
+    border-radius: 4px;
+    /* 角を4px丸める */
+    /* 動作 */
+    cursor: pointer;
+    /* マウスを乗せた時に指先アイコンにする */
+    transition: all 0.2s;
+    /* 変化する時に0.2秒かけて滑らかに動かす */
 }
 
-/* 選択中のボタン色（クリックしてアクティブな時） */
 .toggle-btn.active {
-    /* 選択中の背景色（茶色） */
-    background: #795548;
-    /* 文字の色（白） */
+    /* ボタンが選択（アクティブ）されている時の設定 */
+    background: #5DC9C4;
+    /* 背景色を濃い茶色にする */
     color: #fff;
-    /* 文字を太くする */
+    /* 文字・アイコンの色を白にする */
+    border: 3px solid #00afa6;
+    /* 枠線を5pxに太くして白にする */
     font-weight: bold;
-    /* 枠線の色（白） */
-    border-color: #fff;
-    /* 枠線の太さを3pxから5pxに少し大きくする */
-    border-width: 5px;
+    /* 文字を太くする */
 }
 
 /* ==========================================
-   4. Feature Specifics（特定の機能：比率やパレット）
-   ========================================== */
+4. Feature Specifics（特定の機能：比率やパレット）
+========================================== */
+
+/* --- 比率選択 (Ratio) --- */
 .ratio-box {
-    /* 四角形の枠を表示する設定 */
     display: block;
-    /* 比率アイコンの枠線の太さと色 */
-    border: 1.5px solid currentColor;
-    /* アイコンの中身をうっすら赤っぽく塗る */
-    background: rgba(195, 145, 145, 0.1);
-    /* 枠線を含めたサイズ計算 */
+    /* 図形の枠を表示する */
     box-sizing: border-box;
+    /* サイズ計算を枠線込みにする */
+    background: rgba(195, 145, 145, 0.1);
+    /* 枠の中をうっすら塗る */
+    border: 1.5px solid currentColor;
+    /* 1.5pxの枠線を引く */
 }
 
-/* 各アスペクト比アイコン（16:9や1:1など）の具体的なサイズ */
-.r-16-9 { width: 26px; height: 14.6px; }
-.r-4-3 { width: 24px; height: 18px; }
-.r-1-1 { width: 20px; height: 20px; }
-.r-3-4 { width: 18px; height: 24px; }
-.r-9-16 { width: 14.6px; height: 26px; }
+/* 各比率に応じた形の設定 */
+.r-16-9 { width: 28px; aspect-ratio: 16 / 9; }
+.r-4-3  { width: 24px; aspect-ratio: 4 / 3; }
+.r-1-1  { width: 18px; aspect-ratio: 1 / 1; }
+.r-3-4  { width: 15px; aspect-ratio: 3 / 4; }
+.r-9-16 { width: 13px; aspect-ratio: 9 / 16; }
 
 .ratio-text {
-    /* 比率の文字の大きさ */
-    font-size: 0.9em;
-    /* 文字を太くする */
+    font-size: 1.1em;
+    /* 文字の大きさ */
     font-weight: bold;
+    /* 文字を太くする */
 }
 
+/* --- カラーパレット (Palette) --- */
 .palette-group {
-    /* 最初は隠しておく設定 */
-    display: none; 
-    /* 中身を縦に並べる */
+    display: none;
+    /* 最初は隠しておく（画像読み込み後に表示） */
     flex-direction: column;
-    /* 要素間の隙間 */
-    gap: 10px;
-    /* 横幅いっぱい */
     width: 100%;
-    /* 上側に隙間を作る */
-    margin-top: 10px;
+    background: #CEAB94;
+    /* パレット全体の背景色（濃い茶色） */
+    border: 7px solid #BA8D6E;
+    /* パレット全体の太い枠線（ベージュ） */
+    border-radius: 12px;
+    /* 角を12px丸める */
+    overflow: hidden;
+    /* 枠からはみ出した分を隠す */
+    /* 【重要】隙間を確保しつつ、余ったスペースだけを埋める設定 */
+    flex: 1;
+    min-height: 0;
 }
 
-/* パレット上部の操作部分（色選択など） */
+.palette-group.is-visible {
+    display: flex;
+    /* 画像読み込み後、この設定で表示される */
+}
+
 .palette-header {
-    /* 横に並べて中央揃えにする */
     display: flex;
     justify-content: center;
+    /* 中身を左右中央に寄せる */
     align-items: center;
-    /* 要素の間隔 */
-    gap: 10px;
-    /* 内側の余白 */
-    padding: 10px;
-    /* 背景色（濃い茶色） */
-    background: #5c4333;
-    /* 角の丸み */
-    border-radius: 4px;
-    /* 枠線 */
-    border: 2px solid #8D6E63;
+    gap: 0;
+    padding: 5px 0 0 0;
+    /* 上側だけに5pxの余白を作る */
+    background: transparent;
+    /* 背景は透明 */
 }
 
 .current-group-label {
-    /* 現在選んでいる色のグループを示す枠のサイズ */
-    width: 60px;
-    height: 30px;
-    /* カプセル型の丸み */
-    border-radius: 15px;
-    /* 白い枠線 */
-    border: 2px solid #fff;
+    box-sizing: border-box;
+    width: 30px;
+    /* 中央の大きな色のプレビュー幅 */
+    height: 60px;
+    /* 高さを60pxにする */
+    border: 3px solid #fff;
+    /* 2pxの白い枠線 */
+    border-radius: 0;
+    /* 角は丸めない */
 }
 
 .nav-color-chip {
-    /* 小さい色の粒（ナビ用）のサイズ */
+    box-sizing: border-box;
     width: 25px;
-    height: 25px;
-    /* 丸くする */
-    border-radius: 50%;
-    /* 色を正確に見せるため不透明にする */
-    opacity: 1;
-    /* 真ん中と同じく、しっかりとした白い枠線にする */
+    /* 両端の小さな色のプレビュー幅 */
+    height: 50px;
+    /* 高さを50pxにする */
     border: 2px solid #fff;
-}
-/* 画像が読み込まれた時に表示するためのクラス */
-.palette-group.is-visible {
-    /* 隠れていたパレットを表示する */
-    display: flex;
+    /* 2pxの白い枠線 */
+    border-radius: 0;
+    /* 角は丸めない */
+    opacity: 1;
+    /* 透明度（1は不透明） */
 }
 
 .palette-colors {
-    /* 色の塊を格子状に並べる */
     display: grid;
-    /* 横に2つ並べる（サイズは中身に合わせる） */
-    grid-template-columns: repeat(2, max-content); 
-    /* 全体を中央に寄せる */
+    /* 色ボタンを網目状（グリッド）に並べる */
+    grid-template-columns: repeat(2, max-content);
+    /* 2列に並べる */
     justify-content: center;
-    /* 左右の隙間 */
-    column-gap: 10px; 
-    /* 上下の隙間 */
-    row-gap: 10px;    
-    /* パレット内の余白（上下 左右） */
-    padding: 20px 20px; 
-    /* パレットの背景色 */
-    background: #5c4333;
-    /* 角の丸み */
-    border-radius: 4px;
-    /* パレットの最低限の高さ */
-    min-height: 430px; 
-    /* 中身を上から詰めて並べる */
+    /* グリッド全体を中央に寄せる */
     align-content: start;
-    /* パレットの枠線 */
-    border: 2px solid #8D6E63; 
+    /* 上から順番に詰める */
+    column-gap: 10px;
+    /* 横の隙間を10pxにする */
+    row-gap: 10px;
+    /* 縦の隙間を10pxにする */
+    padding: 10px 20px;
+    /* 内側の余白（上 右 下 左） */
+    /* 中身が多い時にスクロールさせる */
+    flex: 1;
+    overflow-y: auto;
 }
 
 .color-box {
-    /* 縦横比を1:1にする（正方形） */
     aspect-ratio: 1 / 1;
-    /* 円の大きさ（高さ） */
+    /* 縦横比を1:1（正方形）に保つ */
     height: 70px;
-    /* 50%に設定して正円にする */
-    border-radius: 50%;
-    /* 円の細い白い枠線 */
+    /* 各色ボタンの高さ（大きさ） */
+    background-color: transparent;
+    /* 背景色は後から自動設定されるので透明 */
     border: 1px solid #ffffff;
-    /* 指先カーソル */
+    /* 1pxの白い枠線 */
+    border-radius: 50%;
+    /* 50%丸めて円形にする */
     cursor: pointer;
-    /* 大きさが変わる時のアニメーション速度 */
+    /* 指先アイコンにする */
     transition: transform 0.1s;
+    /* 大きさが変わる時に0.1秒かけて動かす */
 }
 
 .color-box.selected {
-    /* 選択された色に太い枠をつける */
-    border: 4px solid #ffffff; 
-    /* 少し大きく表示（1.1倍） */
-    transform: scale(1.1);
-    /* 他の色よりも手前に表示する */
     z-index: 2;
+    /* 選択された色を一番手前に持ってくる */
+    border: 4px solid #ffffff;
+    /* 選択時は枠線を4pxに太くする */
+    transform: scale(1.1);
+    /* 大きさを1.1倍に拡大する */
 }
 
+/* --- グリッドアイコン (Grid Icon) --- */
 .res-grid-icon {
-    /* マス目アイコンの設定 */
     display: grid;
-    /* 枠線の太さと色 */
-    border: 1.5px solid currentColor; 
-    /* アイコンのサイズ */
     width: 26px;
+    /* アイコンの横幅 */
     height: 26px;
+    /* アイコンの高さ */
+    border: 1.5px solid currentColor;
+    /* アイコンの外枠（文字色と同じ） */
 }
 
 .res-grid-icon span {
-    /* マス目の中の線の太さ（極細） */
-    border: 0.1px solid currentColor; 
+    border: 0.1px solid currentColor;
+    /* アイコンの中の網目線の太さ */
 }
 
-/* マス目アイコンの分割数設定（1x1〜4x4） */
-.grid-1x1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
-.grid-2x2 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
-.grid-3x3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
-.grid-4x4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); }
+/* 分割数ごとの設定（1x1から4x4まで） */
+.grid-1x1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
 
-/* アップロード画面（中央の「画像を読み込む」エリア） */
+.grid-2x2 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.grid-3x3 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.grid-4x4 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+/* --- アップロードエリア (Upload) --- */
 .viewport-overlay {
-    /* キャンバスの真上に重ねる設定 */
     position: absolute;
-    /* 上下左右いっぱいに広げる */
+    /* キャンバスの真上に重ねる */
     inset: 0;
-    /* 中のボタンを中央に配置 */
+    /* 上下左右いっぱいに広げる */
     display: flex;
     align-items: center;
+    /* 上下中央揃え */
     justify-content: center;
-    /* クリックを下のキャンバスに透過させない（通常は反応しない） */
+    /* 左右中央揃え */
     pointer-events: none;
+    /* このレイヤー自体はクリックを無視する（下のボタンには反応させる） */
 }
 
 .upload-container {
-    /* 背景色（キャンバスより少しオレンジ寄りの明るいベージュ） */
-    background-color: #F8E8C1;
-    /* 背景の模様（キャンバスのストライプにオレンジのフィルターをかけたような色） */
-    background-image: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 5px,
-        #f3e0c3 5px,
-        #f3dd7a 10px
-    );
-    /* 枠線の太さと色（茶色） */
-    border: 7px solid #edd376;
-    /* 角の丸み */
-    border-radius: 12px;
-    /* ここはクリックできるようにする設定 */
     pointer-events: auto;
-    /* 文字を中央揃えにする */
+    /* ここだけはクリックできるようにする */
     text-align: center;
-    /* 枠の外側にぼんやり光る影をつける */
+    /* 中の文字を中央にする */
+    background-color: #F8E8C1;
+    /* 背景色 */
+    background-image: repeating-linear-gradient(45deg,
+            transparent,
+            transparent 5px,
+            #f3e0c3 5px,
+            #f3dd7a 10px);
+    /* ストライプ模様の設定 */
+    border: 7px solid #edd376;
+    /* 7pxの太い枠線 */
+    border-radius: 12px;
+    /* 角を12px丸める */
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.399);
-
-    /* --- 追加：ポンっと動くための設定 --- */
-    /* 変化（拡大と影）を滑らかにする設定 */
+    /* ぼんやり白い影をつける */
+    /* アニメーションの設定：マウスを乗せた時に「ポンッ」と動くようにする */
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
 }
 
-/* マウスを乗せた時の動き */
 .upload-container:hover {
-    /* 少し大きくする（1.05倍） */
     transform: scale(1.05);
-    /* 影を少し強調して浮いているように見せる */
+    /* マウスを乗せた時に1.05倍に大きくする */
     box-shadow: 0 10px 30px rgba(112, 74, 46, 0.15);
+    /* 影を濃くして浮いたように見せる */
 }
 
-/* クリックした瞬間の手応え */
 .upload-container:active {
-    /* 押された感じを出すために少し縮める */
     transform: scale(0.98);
+    /* クリックした瞬間に少しだけ凹ませる */
 }
 
 .upload-label {
-    /* 中の文字を中央に並べる */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* クリックできるエリアのサイズ（横） */
     width: 300px;
-    /* クリックできるエリアのサイズ（縦） */
+    /* クリック可能なエリアの横幅 */
     height: 150px;
-    /* 指先カーソル */
-    cursor: pointer;
-    /* 文字の色（濃い茶色） */
-    color: #a26f1e;
-    /* 文字を太くする */
+    /* クリック可能なエリアの高さ */
+    color: #AC7D5D;
+    /* 文字の色 */
     font-weight: bold;
-
-    /* 文字色の変化も滑らかにする */
+    /* 文字を太くする */
+    cursor: pointer;
     transition: color 0.2s ease;
 }
 
-/* ホバー時に文字色を少し濃くする */
 .upload-label:hover {
-    color: #815615;
+    color: #8a634a;
+    /* マウスを乗せた時に文字色を少し濃くする */
 }
-/* メッセージ入力エリアのスタイル */
+
+/* --- メッセージ送信エリア (Message) --- */
 .msg-container {
     display: flex;
+    align-self: flex-end;
+    /* 全体の中で下側に配置する */
     gap: 8px;
-    margin-left: auto; /* 右側に寄せる */
-    align-self: flex-end; /* 説明文の下側に揃える */
+    /* 入力欄とボタンの間の隙間 */
+    margin-left: auto;
+    /* 右端に寄せる */
     padding-bottom: 5px;
+    /* 下側の隙間 */
 }
 
 .msg-input {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #edd376;
-    border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 0.85em;
     width: 220px;
-    outline: none;
+    /* 入力欄の横幅 */
+    padding: 6px 10px;
+    /* 入力欄内の余白（上下 左右） */
+    font-size: 0.85em;
+    /* 文字の大きさ */
     color: #5D4037;
+    /* 入力する文字の色 */
+    background: rgba(255, 255, 255, 0.9);
+    /* 入力欄の背景（少し透明な白） */
+    border: 2px solid #edd376;
+    /* 2pxの枠線 */
+    border-radius: 6px;
+    /* 角を6px丸める */
+    outline: none;
+    /* クリックした時に出る青い線を消す */
 }
 
 .msg-input::placeholder {
     color: #a3907e;
+    /* 入力前のヒント文字の色（薄い茶色） */
 }
 
 .msg-send-btn {
-    background: #b2955c;
-    color: white;
-    border: none;
     padding: 6px 15px;
-    border-radius: 6px;
+    /* ボタン内の余白 */
     font-size: 0.85em;
-    cursor: pointer;
     font-weight: bold;
-    transition: background 0.2s, transform 0.1s;
+    color: white;
+    /* ボタンの文字色（白） */
     white-space: nowrap;
+    /* ボタン内の文字を改行させない */
+    background: #b2955c;
+    /* ボタンの背景色（金茶色） */
+    border: none;
+    /* 枠線をなしにする */
+    border-radius: 6px;
+    /* 角を6px丸める */
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
 }
 
 .msg-send-btn:hover {
     background: #8d6e63;
+    /* マウスを乗せた時にボタンの色を濃い茶色に変える */
 }
 
 .msg-send-btn:active {
     transform: translateY(1px);
+    /* クリックした時に1pxだけ下に下げる（押した感じを出す） */
 }

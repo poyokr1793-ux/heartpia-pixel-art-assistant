@@ -424,22 +424,30 @@ function updateUI(idx) {
     const groupKeys = Object.keys(RAW_PALETTE);
     const gIdx = groupKeys.indexOf(info.group);
 
-    // ヘッダーの更新
+// ヘッダーの更新（5個並べるロジック）
     header.innerHTML = '';
     
-    // 前のグループのHeader色
-    const prevHeader = gIdx > 0 ? RAW_PALETTE[groupKeys[gIdx - 1]].Header : null;
-    header.appendChild(createNavChip(prevHeader));
+    // 1. 左端 (2つ前)
+    const farLeft = gIdx > 1 ? RAW_PALETTE[groupKeys[gIdx - 2]].Header : null;
+    header.appendChild(createNavChip(farLeft, 'far-left'));
+
+    // 2. 左隣 (1つ前)
+    const nearLeft = gIdx > 0 ? RAW_PALETTE[groupKeys[gIdx - 1]].Header : null;
+    header.appendChild(createNavChip(nearLeft, 'near-left'));
     
-    // 現在のグループのHeader色
+    // 3. 中央 (現在)
     const mid = document.createElement('div');
     mid.className = 'current-group-label';
     mid.style.backgroundColor = `rgb(${RAW_PALETTE[info.group].Header.join(',')})`;
     header.appendChild(mid);
     
-    // 次のグループのHeader色
-    const nextHeader = gIdx < groupKeys.length - 1 ? RAW_PALETTE[groupKeys[gIdx + 1]].Header : null;
-    header.appendChild(createNavChip(nextHeader));
+    // 4. 右隣 (1つ後)
+    const nearRight = gIdx < groupKeys.length - 1 ? RAW_PALETTE[groupKeys[gIdx + 1]].Header : null;
+    header.appendChild(createNavChip(nearRight, 'near-right'));
+
+    // 5. 右端 (2つ後)
+    const farRight = gIdx < groupKeys.length - 2 ? RAW_PALETTE[groupKeys[gIdx + 2]].Header : null;
+    header.appendChild(createNavChip(farRight, 'far-right'));
 
     // カラーリストの更新
     colors.innerHTML = '';
@@ -459,16 +467,24 @@ function updateUI(idx) {
     });
 }
 
-function createNavChip(rgb) {
+function createNavChip(rgb, position) {
     const div = document.createElement('div');
     div.className = 'nav-color-chip';
     if (rgb) {
-        // 色がある時は、背景色を設定し、枠線を白く、不透明度を1にする
         div.style.backgroundColor = `rgb(${rgb.join(',')})`;
         div.style.border = '2px solid #fff';
-        div.style.opacity = '1';
+        
+        // 隣り合う境界線の重なりを防ぐ処理
+        if (position === 'far-left') {
+            div.style.borderRight = 'none';
+        } else if (position === 'near-left') {
+            div.style.borderRight = 'none';
+        } else if (position === 'near-right') {
+            div.style.borderLeft = 'none';
+        } else if (position === 'far-right') {
+            div.style.borderLeft = 'none';
+        }
     } else {
-        // 端の場合（rgbがnullの場合）は、枠線も消して完全に透明にする
         div.style.border = 'none';
         div.style.backgroundColor = 'transparent';
     }
