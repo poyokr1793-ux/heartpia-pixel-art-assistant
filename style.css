@@ -104,8 +104,8 @@ body {
             #F3E6B5 5px,
             #F3E6B5 10px);
     /* 背景に45度の斜め線を引く設定 */
-    border: 7px solid #edd376;
-    /* 7pxの太い枠線（色：黄色系） */
+    border: 10px solid #edd376;
+    /* 10pxの太い枠線（色：黄色系） */
     border-radius: 20px;
     /* 角を20px分、丸める */
     /* 制御 */
@@ -193,8 +193,8 @@ body {
     /* 通常時の背景色（白） */
     color: #ffffff;
     /* 通常時の文字・アイコンの色（茶色） */
-    border: 3px solid #BA8D6E;
-    /* 3pxの枠線（色：黄土色） */
+    border: 5px solid #BA8D6E;
+    /* 5pxの枠線（色：黄土色） */
     border-radius: 4px;
     /* 角を4px丸める */
     /* 動作 */
@@ -210,7 +210,7 @@ body {
     /* 背景色を濃い茶色にする */
     color: #fff;
     /* 文字・アイコンの色を白にする */
-    border: 3px solid #00afa6;
+    border: 5px solid #00afa6;
     /* 枠線を5pxに太くして白にする */
     font-weight: bold;
     /* 文字を太くする */
@@ -247,7 +247,7 @@ body {
 }
 
 .mode-text {
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: bold;
     line-height: 1.2;
 }
@@ -264,7 +264,7 @@ body {
     width: 100%;
     background: #CEAB94;
     /* パレット全体の背景色（濃い茶色） */
-    border: 7px solid #BA8D6E;
+    border: 10px solid #BA8D6E;
     /* パレット全体の太い枠線（ベージュ） */
     border-radius: 12px;
     /* 角を12px丸める */
@@ -298,8 +298,8 @@ body {
     /* 中央の大きな色のプレビュー幅 */
     height: 60px;
     /* 高さを60pxにする */
-    border: 3px solid #fff;
-    /* 2pxの白い枠線 */
+    border: 5px solid #fff;
+    /* 5pxの白い枠線 */
     border-radius: 0;
     /* 角は丸めない */
 }
