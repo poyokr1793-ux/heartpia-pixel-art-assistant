@@ -91,8 +91,8 @@ body {
 #viewport {
     position: relative;
     /* 子要素（アップロード画面）を配置する際の基準にする */
-    flex: 1;
-    /* 横幅を可能な限り広げる */
+    flex: 75;
+    /* 横幅の比率を75%に設定 */
     margin-bottom: 5px;
     /* 下側に5pxの隙間を作る */
     /* 見た目：背景・枠線 */
@@ -118,7 +118,8 @@ body {
 .side-panel {
     display: flex;
     flex-direction: column;
-    width: 280px;
+    flex: 25;
+    /* 横幅の比率を25%に設定 */
     padding: 0 15px;
     /* パネル自体の高さを100%に固定し、中身がはみ出さないようにする */
     height: 100%;
@@ -159,6 +160,18 @@ body {
     gap: 10px;
 }
 
+/* ボタン群のエリアを全体の25%の高さに設定 */
+#ratioButtons, 
+#accuracyButtons, 
+#modeButtons {
+    flex: 25;
+}
+
+/* パレットのエリアを全体の75%の高さに設定 */
+.palette-group {
+    flex: 75;
+}
+
 .button-grid {
     display: flex;
     flex-wrap: nowrap;
@@ -184,7 +197,7 @@ body {
     /* サイズ */
     min-width: 0;
     /* 横幅が狭くなっても潰れないようにする設定 */
-    height: 60px;
+     height: 60px;
     /* ボタンの高さを60pxにする */
     padding: 2px;
     /* ボタン内の余白 */
@@ -200,8 +213,12 @@ body {
     /* 動作 */
     cursor: pointer;
     /* マウスを乗せた時に指先アイコンにする */
-    transition: all 0.2s;
-    /* 変化する時に0.2秒かけて滑らかに動かす */
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.toggle-btn:active {
+    /* クリックした瞬間：少し小さくなって弾む準備 */
+    transform: scale(0.92);
 }
 
 .toggle-btn.active {
@@ -211,13 +228,14 @@ body {
     color: #fff;
     /* 文字・アイコンの色を白にする */
     border: 4px solid #00afa6;
-    /* 枠線の太さは変えず、色だけ変更 */
-    box-shadow: inset 0 0 0 1px #00afa6;
-    /* 内側に1pxの影を足すことで、外寸を変えずに「太くなった」ように見せる */
+    /* 枠線の色を変更 */
+    /* 外側に3pxの太い線を合成して、枠が外に太くなったように見せる */
+    box-shadow: 0 0 0 0.7px #00afa6;
+    /* 重なり順を上にして、隣のボタンの枠より目立たせる */
+    z-index: 1;
     font-weight: bold;
     /* 文字を太くする */
 }
-
 /* ==========================================
 4. Feature Specifics（特定の機能：比率やパレット）
 ========================================== */
@@ -353,8 +371,6 @@ body {
     /* 50%丸めて円形にする */
     cursor: pointer;
     /* 指先アイコンにする */
-    transition: transform 0.1s;
-    /* 大きさが変わる時に0.1秒かけて動かす */
 }
 
 .color-box.selected {
@@ -362,8 +378,6 @@ body {
     /* 選択された色を一番手前に持ってくる */
     border: 4px solid #ffffff;
     /* 選択時は枠線を4pxに太くする */
-    transform: scale(1.1);
-    /* 大きさを1.1倍に拡大する */
 }
 
 /* --- グリッドアイコン (Grid Icon) --- */
@@ -435,22 +449,12 @@ body {
     /* 7pxの太い枠線 */
     border-radius: 12px;
     /* 角を12px丸める */
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.399);
-    /* ぼんやり白い影をつける */
-    /* アニメーションの設定：マウスを乗せた時に「ポンッ」と動くようにする */
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
-}
-
-.upload-container:hover {
-    transform: scale(1.05);
-    /* マウスを乗せた時に1.05倍に大きくする */
-    box-shadow: 0 10px 30px rgba(112, 74, 46, 0.15);
-    /* 影を濃くして浮いたように見せる */
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .upload-container:active {
-    transform: scale(0.98);
-    /* クリックした瞬間に少しだけ凹ませる */
+    /* クリックした瞬間：ぷにっと少し沈む */
+    transform: scale(0.96);
 }
 
 .upload-label {
@@ -467,9 +471,7 @@ body {
     font-weight: bold;
     /* 文字を太くする */
     cursor: pointer;
-    transition: color 0.2s ease;
 }
-
 .upload-label:hover {
     color: #8a634a;
     /* マウスを乗せた時に文字色を少し濃くする */
@@ -522,21 +524,18 @@ body {
     white-space: nowrap;
     /* ボタン内の文字を改行させない */
     background: #b2955c;
-    /* ボタンの背景色（金茶色） */
+    /* 通常時の背景色（金茶色） */
     border: none;
     /* 枠線をなしにする */
     border-radius: 6px;
     /* 角を6px丸める */
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-.msg-send-btn:hover {
-    background: #8d6e63;
-    /* マウスを乗せた時にボタンの色を濃い茶色に変える */
+    /* 押した瞬間のアニメーション速度 */
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .msg-send-btn:active {
-    transform: translateY(1px);
-    /* クリックした時に1pxだけ下に下げる（押した感じを出す） */
+    /* クリックした瞬間：色を濃い茶色に変え、ぷにっと縮小させる */
+    background: #8d6e63;
+    transform: scale(0.9);
 }
