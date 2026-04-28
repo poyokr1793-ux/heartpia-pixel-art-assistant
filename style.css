@@ -104,10 +104,10 @@ body {
             #F3E6B5 5px,
             #F3E6B5 10px);
     /* 背景に45度の斜め線を引く設定 */
-    border: 10px solid #edd376;
-    /* 10pxの太い枠線（色：黄色系） */
-    border-radius: 20px;
-    /* 角を20px分、丸める */
+    border: 8px solid #edd376;
+    /* 枠線の太さを統一 */
+    border-radius: 16px;
+    /* 角丸を大きな要素の基準値に統一 */
     /* 制御 */
     overflow: hidden;
     /* 枠からはみ出た画像を隠す */
@@ -193,10 +193,10 @@ body {
     /* 通常時の背景色（白） */
     color: #ffffff;
     /* 通常時の文字・アイコンの色（茶色） */
-    border: 5px solid #BA8D6E;
-    /* 5pxの枠線（色：黄土色） */
-    border-radius: 4px;
-    /* 角を4px丸める */
+    border: 4px solid #BA8D6E;
+    /* 枠線の太さを4pxに微調整 */
+    border-radius: 8px;
+    /* 中サイズの角丸に統一 */
     /* 動作 */
     cursor: pointer;
     /* マウスを乗せた時に指先アイコンにする */
@@ -210,8 +210,10 @@ body {
     /* 背景色を濃い茶色にする */
     color: #fff;
     /* 文字・アイコンの色を白にする */
-    border: 5px solid #00afa6;
-    /* 枠線を5pxに太くして白にする */
+    border: 4px solid #00afa6;
+    /* 枠線の太さは変えず、色だけ変更 */
+    box-shadow: inset 0 0 0 1px #00afa6;
+    /* 内側に1pxの影を足すことで、外寸を変えずに「太くなった」ように見せる */
     font-weight: bold;
     /* 文字を太くする */
 }
@@ -264,10 +266,10 @@ body {
     width: 100%;
     background: #CEAB94;
     /* パレット全体の背景色（濃い茶色） */
-    border: 10px solid #BA8D6E;
-    /* パレット全体の太い枠線（ベージュ） */
-    border-radius: 12px;
-    /* 角を12px丸める */
+    border: 8px solid #BA8D6E;
+    /* キャンバスの外枠と同じ太さに統一 */
+    border-radius: 16px;
+    /* キャンバスと同じ大きな角丸に統一 */
     overflow: hidden;
     /* 枠からはみ出した分を隠す */
     /* 【重要】隙間を確保しつつ、余ったスペースだけを埋める設定 */
