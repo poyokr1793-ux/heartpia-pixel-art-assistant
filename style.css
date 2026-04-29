@@ -369,26 +369,74 @@ body {
 
 .color-box {
     aspect-ratio: 1 / 1;
-    /* 縦横比を1:1（正方形）に保つ */
     height: 70px;
-    /* 各色ボタンの高さ（大きさ） */
-    background-color: transparent;
-    /* 背景色は後から自動設定されるので透明 */
-    border: 1px solid #ffffff;
-    /* 1pxの白い枠線 */
-    border-radius: 50%;
-    /* 50%丸めて円形にする */
     cursor: pointer;
-    /* 指先アイコンにする */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible; /* 強調枠がはみ出せるようにする */
 }
 
+/* 1層目（最背面）：強調枠。元の画像の色を表示 */
+.selection-rim {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('53_20260429110443.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* 強調のために少し大きくする */
+    transform: scale(1.1);
+    z-index: 0;
+}
+
+/* 選択されたボックス全体をまとめて拡大（太枠も一緒に大きくなる） */
 .color-box.selected {
+    /* すでに1.15倍になっている1層目も含め、全体をさらに1.1倍するイメージ */
+    transform: scale(1.1);
+    z-index: 10;
+    transition: transform 0.1s ease-out;
+}
+
+
+
+/* 選択時に表示をオンにする */
+.color-box.selected .selection-rim {
+    display: block;
+}
+
+/* 2層目（中間）：中身の色。枠線からはみ出さないよう、わずかに小さく配置 */
+.color-box::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-code);
+    -webkit-mask-image: url('53_20260429110443.svg');
+    mask-image: url('53_20260429110443.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    /* 1.0(100%)だとエッジがはみ出すことがあるため、0.98(98%)に絞る */
+    transform: scale(0.98);
+    z-index: 1;
+}
+
+/* 3層目（最前面）：通常の枠線。元の画像の色を表示 */
+.color-box::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('53_20260428121313.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
     z-index: 2;
-    /* 選択された色を一番手前に持ってくる */
-    /* 外側に4pxの白い線を引く（影はなし） */
-    box-shadow: 0 0 0 4px #ffffff;
-    /* 他のボタンと合わせて少しだけ大きくする */
-    transform: scale(1.05);
+}
+
+.color-box.selected::after {
+    z-index: 2; /* 枠線自体は元の位置・太さで上に重ねる */
 }
 
 /* --- グリッドアイコン (Grid Icon) --- */

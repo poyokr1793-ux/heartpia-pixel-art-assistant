@@ -560,10 +560,15 @@ function updateUI(idx) {
 
     // カラーリストの更新
     colors.innerHTML = '';
-    RAW_PALETTE[info.group].Colors.forEach((rgb, i) => {
+RAW_PALETTE[info.group].Colors.forEach((rgb, i) => {
         const box = document.createElement('div');
         box.className = `color-box ${i === info.cIdx ? 'selected' : ''}`;
-        box.style.backgroundColor = `rgb(${rgb.join(',')})`;
+        box.style.setProperty('--color-code', `rgb(${rgb.join(',')})`);
+        
+        // 強調用の外枠層を追加
+        const rim = document.createElement('div');
+        rim.className = 'selection-rim';
+        box.appendChild(rim);
         
         box.onclick = () => {
             const newIdx = PALETTE_MAP.findIndex(m => m.group === info.group && m.cIdx === i);
