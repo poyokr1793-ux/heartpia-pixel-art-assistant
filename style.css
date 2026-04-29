@@ -1,4 +1,40 @@
 /* ==========================================
+0. CSS Variables（色の変数管理）
+========================================== */
+:root {
+    /* ベースカラー */
+    --bg-main: #FFFDE7;          /* 全体の背景（薄いクリーム） */
+    --text-main: #5D4037;        /* 基本の文字色（濃い茶色） */
+    --text-sub: #8d6e63;         /* 補足の文字色（薄い茶色） */
+    
+    /* アクセント・ブランドカラー */
+    --brand-gold: #FFD05c;       /* タイトル等の金茶色 */
+    --brand-border: #b0977b;     /* タイトルの縁取り */
+    --accent-teal: #5DC9C4;      /* アクティブ時の青緑 */
+    --accent-teal-dark: #00afa6; /* アクティブ時の枠線 */
+    
+    /* キャンバス・アップロードエリア */
+    --canvas-bg: #F6ECC3;        /* キャンバス背景 */
+    --canvas-stripe: #F3E6B5;    /* キャンバスの縞模様 */
+    --canvas-border: #edd376;    /* キャンバス・入力欄の枠線 */
+    --upload-bg: #F8E8C1;        /* アップロード箱の背景 */
+    --upload-stripe-1: #f3e0c3;
+    --upload-stripe-2: #f3dd7a;
+    --upload-text: #AC7D5D;
+    --upload-text-hover: #8a634a;
+
+    /* ボタン・パネル */
+    --panel-bg: #CEAB94;         /* パネルやボタンの背景色 */
+    --panel-border: #BA8D6E;     /* パネルやボタンの枠線 */
+    --btn-text: #ffffff;         /* ボタンの文字色 */
+    --btn-send: #b2955c;         /* 送信ボタン */
+    --btn-send-active: #8d6e63;  /* 送信ボタン（押した時） */
+    
+    /* その他 */
+    --placeholder: #a3907e;      /* 入力欄のヒント色 */
+}
+
+/* ==========================================
 1. Global Settings（全体の共通設定）
 ========================================== */
 * {
@@ -22,9 +58,9 @@ body {
     padding: 15px;
     /* 画面の内側に15pxの余白を作る */
     /* 見た目（色や文字） */
-    background: #FFFDE7;
+    background: var(--bg-main);
     /* 画面全体の背景色（薄いクリーム色） */
-    color: #5D4037;
+    color: var(--text-main);
     /* 全体の文字色（濃い茶色） */
     font-family: sans-serif;
     /* 文字の形（飾りがないゴシック体） */
@@ -56,11 +92,11 @@ body {
     /* 文字の上下の余白を消す */
     font-size: 3em;
     /* 文字の大きさ（標準の2.4倍） */
-    color: #FFD05c;
+    color: var(--brand-gold);
     /* タイトルの文字色（金茶色） */
     font-family:'Mochiy Pop One', sans-serif;
     /* 全体の縁取り設定 */
-    -webkit-text-stroke: 7px #b0977b; /* 縁の太さと色 */
+    -webkit-text-stroke: 7px var(--brand-border); /* 縁の太さと色 */
     
     /* 縁を外側に付けるように見せる設定（文字が細くなるのを防ぎます） */
     paint-order: stroke fill;
@@ -73,7 +109,7 @@ body {
     /* 文字の大きさ（少し小さめ） */
     line-height: 1.4;
     /* 行の間隔（1.4倍） */
-    color: #8d6e63;
+    color: var(--text-sub);
     /* 説明文の文字色（少し薄い茶色） */
 }
 
@@ -98,15 +134,15 @@ body {
     height: calc(100% - 5px);
     margin-bottom: 5px;
     /* 見た目：背景・枠線 */
-    background-color: #F6ECC3;
+    background-color: var(--canvas-bg);
     /* キャンバス内の背景色 */
     background-image: repeating-linear-gradient(45deg,
             transparent,
             transparent 5px,
-            #F3E6B5 5px,
-            #F3E6B5 10px);
+            var(--canvas-stripe) 5px,
+            var(--canvas-stripe) 10px);
     /* 背景に45度の斜め線を引く設定 */
-    border: 8px solid #edd376;
+    border: 8px solid var(--canvas-border);
     /* 枠線の太さを統一 */
     border-radius: 16px;
     /* 角丸を大きな要素の基準値に統一 */
@@ -211,11 +247,11 @@ body {
     padding: 2px;
     /* ボタン内の余白 */
     /* 見た目 */
-    background: #CEAB94;
-    /* 通常時の背景色（白） */
-    color: #ffffff;
-    /* 通常時の文字・アイコンの色（茶色） */
-    border: 4px solid #BA8D6E;
+    background: var(--panel-bg);
+    /* 通常時の背景色 */
+    color: var(--btn-text);
+    /* 通常時の文字・アイコンの色 */
+    border: 4px solid var(--panel-border);
     /* 枠線の太さを4pxに微調整 */
     border-radius: 8px;
     /* 中サイズの角丸に統一 */
@@ -232,11 +268,11 @@ body {
 
 .toggle-btn.active {
     /* ボタンが選択（アクティブ）されている時の設定 */
-    background: #5DC9C4;
+    background: var(--accent-teal);
     /* 背景色を明るい青緑にする */
-    color: #fff;
+    color: var(--btn-text);
     /* 文字・アイコンの色を白にする */
-    border: 4px solid #00afa6;
+    border: 4px solid var(--accent-teal-dark);
     /* 枠線の色を変更 */
     /* 位置は動かさず、少しだけ大きくして選択中を強調 */
     transform: scale(1.05);
@@ -291,9 +327,9 @@ body {
     /* 最初は隠しておく（画像読み込み後に表示） */
     flex-direction: column;
     width: 100%;
-    background: #CEAB94;
-    /* パレット全体の背景色（濃い茶色） */
-    border: 8px solid #BA8D6E;
+    background: var(--panel-bg);
+    /* パレット全体の背景色 */
+    border: 8px solid var(--panel-border);
     /* キャンバスの外枠と同じ太さに統一 */
     border-radius: 16px;
     /* キャンバスと同じ大きな角丸に統一 */
@@ -496,15 +532,15 @@ body {
     /* ここだけはクリックできるようにする */
     text-align: center;
     /* 中の文字を中央にする */
-    background-color: #F8E8C1;
+    background-color: var(--upload-bg);
     /* 背景色 */
     background-image: repeating-linear-gradient(45deg,
             transparent,
             transparent 5px,
-            #f3e0c3 5px,
-            #f3dd7a 10px);
+            var(--upload-stripe-1) 5px,
+            var(--upload-stripe-2) 10px);
     /* ストライプ模様の設定 */
-    border: 7px solid #edd376;
+    border: 7px solid var(--canvas-border);
     /* 7pxの太い枠線 */
     border-radius: 12px;
     /* 角を12px丸める */
@@ -525,14 +561,14 @@ body {
     /* クリック可能なエリアの横幅 */
     height: 150px;
     /* クリック可能なエリアの高さ */
-    color: #AC7D5D;
+    color: var(--upload-text);
     /* 文字の色 */
     font-weight: bold;
     /* 文字を太くする */
     cursor: pointer;
 }
 .upload-label:hover {
-    color: #8a634a;
+    color: var(--upload-text-hover);
     /* マウスを乗せた時に文字色を少し濃くする */
 }
 
@@ -556,11 +592,11 @@ body {
     /* 入力欄内の余白（上下 左右） */
     font-size: 0.85em;
     /* 文字の大きさ */
-    color: #5D4037;
+    color: var(--text-main);
     /* 入力する文字の色 */
     background: rgba(255, 255, 255, 0.9);
     /* 入力欄の背景（少し透明な白） */
-    border: 2px solid #edd376;
+    border: 2px solid var(--canvas-border);
     /* 2pxの枠線 */
     border-radius: 6px;
     /* 角を6px丸める */
@@ -569,7 +605,7 @@ body {
 }
 
 .msg-input::placeholder {
-    color: #a3907e;
+    color: var(--placeholder);
     /* 入力前のヒント文字の色（薄い茶色） */
 }
 
@@ -578,11 +614,11 @@ body {
     /* ボタン内の余白 */
     font-size: 0.85em;
     font-weight: bold;
-    color: white;
+    color: var(--btn-text);
     /* ボタンの文字色（白） */
     white-space: nowrap;
     /* ボタン内の文字を改行させない */
-    background: #b2955c;
+    background: var(--btn-send);
     /* 通常時の背景色（金茶色） */
     border: none;
     /* 枠線をなしにする */
@@ -595,6 +631,6 @@ body {
 
 .msg-send-btn:active {
     /* クリックした瞬間：色を濃い茶色に変え、ぷにっと縮小させる */
-    background: #8d6e63;
+    background: var(--btn-send-active);
     transform: scale(0.9);
 }
