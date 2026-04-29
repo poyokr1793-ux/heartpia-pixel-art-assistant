@@ -212,21 +212,23 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    /* ブロック（精度・比率・モード）同士の縦の隙間を2pxに設定 */
-    gap: 2px;
+    gap: 4px;
     overflow: visible;
 }
 
-/* ボタン群のエリアを全体の25%の高さに設定 */
+/* 比率と精度ボタンの高さ比率 */
 #ratioButtons, 
-#accuracyButtons, 
-#modeButtons {
-    flex: 25;
+#accuracyButtons {
+    flex: 20;
 }
 
-/* パレットのエリアを全体の75%の高さに設定 */
-.palette-group {
-    flex: 75;
+/* パレットとモードボタンを横に並べるための親枠 */
+.palette-and-modes {
+    display: flex;
+    flex: 80;
+    gap: 10px;
+    width: 100%;
+    overflow: visible;
 }
 
 .button-grid {
@@ -341,35 +343,44 @@ body {
 }
 /* モード切り替えボタン専用の高さ調整 */
 #modeButtons .toggle-btn {
-    height: 30px;
+    height: 32px;
+    flex: none;
+    gap: 0;
 }
 
 /* --- カラーパレット (Palette) --- */
 .palette-group {
-    display: none;
-    /* 最初は隠しておく（画像読み込み後に表示） */
+    display: flex;
     flex-direction: column;
-    width: 50%;
-    /* 横幅をサイドパネルの半分に設定 */
-    margin-right: auto;
-    /* 親要素（サイドパネル）の左側に寄せる */
+    width: 50%; /* 横幅を元通りサイドパネルの半分に固定 */
     background: var(--panel-bg);
-    /* パレット全体の背景色 */
     border: 8px solid var(--panel-border);
-    /* キャンバスの外枠と同じ太さに統一 */
     border-radius: 16px;
-    /* キャンバスと同じ大きな角丸に統一 */
     overflow: hidden;
-    /* 枠からはみ出した分を隠す */
-    /* 【重要】隙間を確保しつつ、余ったスペースだけを埋める設定 */
-    flex: 1;
     min-height: 0;
 }
 
-.palette-group.is-visible {
-    display: flex;
-    /* 画像読み込み後、この設定で表示される */
+/* モード切り替えボタンを右側に縦並び */
+#modeButtons.button-grid {
+    flex-direction: column; 
+    flex: 1;                /* パレットの残りの幅をすべて使う */
+    height: auto;           
+    gap: 4px;
+    flex-wrap: nowrap;      
 }
+
+.palette-group {
+    display: flex;
+    flex-direction: column;
+    width: 50%; /* 横幅を元通りサイドパネルの半分に固定 */
+    background: var(--panel-bg);
+    border: 8px solid var(--panel-border);
+    border-radius: 16px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+
 .palette-header {
     display: flex;
     justify-content: center;
