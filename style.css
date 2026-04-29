@@ -349,7 +349,10 @@ body {
     display: none;
     /* 最初は隠しておく（画像読み込み後に表示） */
     flex-direction: column;
-    width: 100%;
+    width: 50%;
+    /* 横幅をサイドパネルの半分に設定 */
+    margin-right: auto;
+    /* 親要素（サイドパネル）の左側に寄せる */
     background: var(--panel-bg);
     /* パレット全体の背景色 */
     border: 8px solid var(--panel-border);
@@ -407,33 +410,28 @@ body {
 
 .palette-colors {
     display: grid;
-    /* 色ボタンを網目状（グリッド）に並べる */
-    grid-template-columns: repeat(2, max-content);
-    /* 2列に並べる */
+    /* ボタンの横幅を固定して並べる */
+    grid-template-columns: repeat(2, 65px);
     justify-content: center;
-    /* グリッド全体を中央に寄せる */
     align-content: start;
-    /* 上から順番に詰める */
-    column-gap: 10px;
-    /* 横の隙間を10pxにする */
-    row-gap: 10px;
-    /* 縦の隙間を10pxにする */
-    padding: 10px 20px;
-    /* 内側の余白（上 右 下 左） */
-    /* 中身が多い時にスクロールさせる */
+    /* ↓ ★ここを変えると横2列の間の隙間が変わります（0pxにすると密着します） */
+    column-gap: 0px; 
+    row-gap: 2px;    
+    padding: 20px 0;
     flex: 1;
     overflow-y: auto;
 }
 
 .color-box {
     aspect-ratio: 1 / 1;
-    height: 70px;
+    /* ここは上の 65px と同じ数字にしてください */
+    height: 65px; 
     cursor: pointer;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible; /* 強調枠がはみ出せるようにする */
+    overflow: visible;
 }
 
 /* 1層目（最背面）：強調枠。元の画像の色を表示 */
