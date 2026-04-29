@@ -262,8 +262,8 @@ body {
 }
 
 .toggle-btn:active {
-    /* クリックした瞬間：少し小さくなって弾む準備 */
-    transform: scale(0.92);
+    /* クリックした瞬間：控えめに沈む */
+    transform: scale(0.95);
 }
 
 .toggle-btn.active {
@@ -280,6 +280,15 @@ body {
     z-index: 10;
     font-weight: bold;
     /* 文字を太くする */
+    /* 選択された瞬間の控えめなぷるん */
+    animation: jelly 0.25s ease-out;
+}
+
+@keyframes jelly {
+    0% { transform: scale(1.05); }
+    40% { transform: scale(1.08, 0.96); }
+    70% { transform: scale(1.04, 1.06); }
+    100% { transform: scale(1.05, 1.05); }
 }
 /* ==========================================
 4. Feature Specifics（特定の機能：比率やパレット）
@@ -344,7 +353,6 @@ body {
     display: flex;
     /* 画像読み込み後、この設定で表示される */
 }
-
 .palette-header {
     display: flex;
     justify-content: center;
@@ -363,7 +371,7 @@ body {
     /* 中央の大きな色のプレビュー幅 */
     height: 60px;
     /* 高さを60pxにする */
-    border: 5px solid #fff;
+    border: 3px solid #fff;
     /* 5pxの白い枠線 */
     border-radius: 0;
     /* 角は丸めない */
@@ -430,12 +438,24 @@ body {
 
 /* 選択されたボックス全体をまとめて拡大（太枠も一緒に大きくなる） */
 .color-box.selected {
-    /* すでに1.15倍になっている1層目も含め、全体をさらに1.1倍するイメージ */
-    transform: scale(1.1);
+    transform: scale(1.08);
     z-index: 10;
     transition: transform 0.1s ease-out;
+    /* 選択時に小さく弾むアニメーション */
+    animation: color-pop 0.3s ease-out;
 }
 
+@keyframes color-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1.08); }
+}
+
+.color-box:active {
+    /* 押し心地を優先し、沈み込みを浅く */
+    transform: scale(0.9);
+    transition: transform 0.05s;
+}
 
 
 /* 選択時に表示をオンにする */
@@ -548,8 +568,14 @@ body {
 }
 
 .upload-container:active {
-    /* クリックした瞬間：ぷにっと少し沈む */
-    transform: scale(0.96);
+    /* クリックした瞬間：大きな面積に合わせて少し深めに、かつ滑らかに沈む */
+    transform: scale(0.97);
+    transition: transform 0.05s ease-out;
+}
+
+/* 離した瞬間に、元のサイズに戻りながら微かにぷるんとさせる */
+.upload-container {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .upload-label {

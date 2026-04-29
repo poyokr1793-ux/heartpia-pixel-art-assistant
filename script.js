@@ -45,6 +45,13 @@ let state = {
     baseDotSize: 10,
     focusIdx: null,       // 現在選択中のパレットINDEX
 
+    /* -------------------------------------------
+     * 【 宣伝用・デモ設定スイッチ 】
+     * true  => ドット選択時に周囲を暗くする（通常）
+     * false => 周囲の色を変化させない（フラット表示）
+     * ------------------------------------------- */
+    enableFocusEffect: true, 
+
     // ビュー（カメラ）状態
     scale: 1,
     offsetX: 0,
@@ -241,10 +248,11 @@ function updateCache() {
             });
         }
 
-        // 色決定（フォーカス外は暗く/明るく）
+     // 色決定（フォーカス外は暗く/明るく）
         const rgb = FLAT_PALETTE[closestIdx];
         let [nr, ng, nb] = rgb;
-        if (state.focusIdx !== null && state.focusIdx !== closestIdx) {
+        // スイッチがオンの時だけ、周囲の色味を変化させる
+        if (state.enableFocusEffect && state.focusIdx !== null && state.focusIdx !== closestIdx) {
             const factor = focusBrightness < 128 ? 0.7 : 0.2;
             if (focusBrightness < 128) {
                 nr += (255 - nr) * factor; ng += (255 - ng) * factor; nb += (255 - nb) * factor;
@@ -558,7 +566,7 @@ function updateUI(idx) {
     const farRight = gIdx < groupKeys.length - 2 ? RAW_PALETTE[groupKeys[gIdx + 2]].Header : null;
     header.appendChild(createNavChip(farRight, 'far-right'));
 
-    // カラーリストの更新
+  // カラーリストの更新
     colors.innerHTML = '';
 RAW_PALETTE[info.group].Colors.forEach((rgb, i) => {
         const box = document.createElement('div');
