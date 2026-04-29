@@ -55,8 +55,8 @@ body {
     /* 高さを画面の表示領域いっぱい（100%）にする */
     margin: 0;
     /* 画面外側の余白をゼロにする */
-    padding: 15px;
-    /* 画面の内側に15pxの余白を作る */
+    padding: 10px 15px;
+    /* 上下を10px、左右を15pxの余白にする */
     /* 見た目（色や文字） */
     background: var(--bg-main);
     /* 画面全体の背景色（薄いクリーム色） */
@@ -81,10 +81,34 @@ body {
     /* 中身を横に並べる */
     align-items: flex-end;
     /* 中身を下揃えにする */
-    gap: 20px;
-    /* タイトルと説明文の間の隙間を20pxにする */
-    margin-bottom: 15px;
-    /* ヘッダーの下側に15pxの隙間を作る */
+    gap: 15px;
+    /* 隙間を微調整 */
+    margin-bottom: 10px;
+    /* 下側の隙間を少し詰める */
+}
+
+.header-controls {
+    display: flex;
+    gap: 8px;
+    margin-left: auto; /* 右端に寄せる */
+    padding-bottom: 5px;
+}
+
+.action-btn {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: var(--text-main);
+    background: var(--upload-bg);
+    border: 2px solid var(--canvas-border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+    background: var(--canvas-border);
 }
 
 .app-title {
@@ -102,16 +126,6 @@ body {
     paint-order: stroke fill;
 }
 
-.app-description {
-    padding-bottom: 5px;
-    /* 下側に少しだけ隙間を作る */
-    font-size: 0.85em;
-    /* 文字の大きさ（少し小さめ） */
-    line-height: 1.4;
-    /* 行の間隔（1.4倍） */
-    color: var(--text-sub);
-    /* 説明文の文字色（少し薄い茶色） */
-}
 
 .main-container {
     display: flex;
