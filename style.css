@@ -126,7 +126,8 @@ body {
     padding: 0 8px;
     font-size: 12px; /* 文字を少し大きく調整 */
     font-weight: bold;
-    color: var(--text-main);
+    /* 文字色を「補足の文字色（薄い茶色）」に変更して馴染ませる */
+    color: var(--text-sub);
     background: var(--bg-main);
     border: 4px solid var(--canvas-border); /* キャンバスの枠線と同じ色と太さに */
     border-bottom: none; /* 下の枠線を消してキャンバスと合体させる */
