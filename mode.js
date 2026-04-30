@@ -25,9 +25,14 @@ const ModeProcessor = {
         };
     },
 
- // 「きれい」モード：彩度を上げて色を整理（以前の「くっきり」の計算をそのまま持ってくる）
+/**
+     * RGBから簡易的な明るさ(平均値)を返します
+     */
+    getBrightness: (r, g, b) => (r + g + b) / 3,
+
+    // 「きれい」モード：彩度を上げて色を整理
     applyClean: (r, g, b) => {
-        const avg = (r + g + b) / 3;
+        const avg = ModeProcessor.getBrightness(r, g, b);
         const saturation = 1.15; // 鮮やかさの倍率
         return {
             r: Math.max(0, Math.min(255, avg + (r - avg) * saturation)),
@@ -36,7 +41,7 @@ const ModeProcessor = {
         };
     },
 
-    // 「くっきり」モード：エッジ強調で輪郭を鋭く（以前の「きれい」の計算をそのまま持ってくる）
+    // 「くっきり」モード：エッジ強調で輪郭を鋭く
     applySharp: (i, r, g, b, imgData, w, h) => {
         const x = i % w;
         const y = Math.floor(i / w);
@@ -46,12 +51,12 @@ const ModeProcessor = {
             const left = (y * w + (x - 1)) * 4;
             const right = (y * w + (x + 1)) * 4;
 
-            const currentBright = (r + g + b) / 3;
+            const currentBright = ModeProcessor.getBrightness(r, g, b);
             const neighborBright = (
-                (imgData[up] + imgData[up + 1] + imgData[up + 2]) / 3 +
-                (imgData[down] + imgData[down + 1] + imgData[down + 2]) / 3 +
-                (imgData[left] + imgData[left + 1] + imgData[left + 2]) / 3 +
-                (imgData[right] + imgData[right + 1] + imgData[right + 2]) / 3
+                ModeProcessor.getBrightness(imgData[up], imgData[up + 1], imgData[up + 2]) +
+                ModeProcessor.getBrightness(imgData[down], imgData[down + 1], imgData[down + 2]) +
+                ModeProcessor.getBrightness(imgData[left], imgData[left + 1], imgData[left + 2]) +
+                ModeProcessor.getBrightness(imgData[right], imgData[right + 1], imgData[right + 2])
             ) / 4;
 
             const diff = currentBright - neighborBright;

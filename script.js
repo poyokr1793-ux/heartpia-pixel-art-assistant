@@ -4,17 +4,26 @@
 const FLAT_PALETTE = [];
 const PALETTE_MAP = [];
 
-// 【安全装置】RAW_PALETTEが存在するか確認してから処理を開始する
-if (typeof RAW_PALETTE !== 'undefined') {
+/**
+ * パレットデータの初期化
+ * RAW_PALETTE(連想配列) を、検索しやすい FLAT_PALETTE(配列) へ変換します
+ */
+function initPalette() {
+    if (typeof RAW_PALETTE === 'undefined') {
+        console.error("palette.js が正しく読み込まれていないか、RAW_PALETTE が定義されていません。");
+        return;
+    }
+
     Object.entries(RAW_PALETTE).forEach(([group, data], gIdx) => {
         data.Colors.forEach((rgb, cIdx) => {
             FLAT_PALETTE.push(rgb);
             PALETTE_MAP.push({ group, gIdx, cIdx, rgb });
         });
     });
-} else {
-    console.error("palette.js が正しく読み込まれていないか、RAW_PALETTE が定義されていません。");
 }
+
+// 起動時にパレットを構築
+initPalette();
 
 const RESOLUTION_OPTIONS = {
     "16:9": [{ label: "30×18", w: 30, h: 18 }, { label: "50×28", w: 50, h: 28 }, { label: "100×56", w: 100, h: 56 }, { label: "150×84", w: 150, h: 84 }],
@@ -135,12 +144,11 @@ function updateCache() {
         const i4 = i * 4;
         let r = imgData[i4], g = imgData[i4 + 1], b = imgData[i4 + 2];
 
-        // 各モードの特殊処理を適用
+   // 各モードの特殊処理を適用
         if (state.currentMode === 'smooth') {
-            r = Math.max(0, Math.min(255, r + errors[i4]));
-            g = Math.max(0, Math.min(255, g + errors[i4 + 1]));
-            b = Math.max(0, Math.min(255, b + errors[i4 + 2]));
-     } else if (state.currentMode === 'clean') {
+            // なめらか：周囲との平均化と誤差拡散を適用
+            ({ r, g, b } = ModeProcessor.applySmooth(i, r, g, b, imgData, state.w, state.h, errors));
+        } else if (state.currentMode === 'clean') {
             // きれい：iなどの情報は不要になったので、r, g, bのみ渡す
             ({ r, g, b } = ModeProcessor.applyClean(r, g, b));
         } else if (state.currentMode === 'sharp') {
@@ -451,6 +459,8 @@ function updateResButtons(aspect) {
 
 
 
+let headerSwipeStart = null;
+
 function updateUI(idx) {
     const panel = document.getElementById('uiPanel');
     const header = document.getElementById('uiHeader');
@@ -460,14 +470,62 @@ function updateUI(idx) {
         panel.classList.remove('is-visible');
         return;
     }
+
+// ヘッダーのスワイプイベント設定（リアルタイム追従版）
+    if (!header.dataset.swipeBound) {
+        let lastGIdx = -1;
+
+        const handleMove = (x) => {
+            if (headerSwipeStart === null) return;
+            const diff = x - headerSwipeStart;
+            // 20px動くごとに1グループ切り替える（感度調整）
+            const step = Math.floor(diff / 20); 
+            
+            if (step !== 0) {
+                const info = PALETTE_MAP[state.focusIdx];
+                const groupKeys = Object.keys(RAW_PALETTE);
+                const currentGIdx = groupKeys.indexOf(info.group);
+                
+                // 移動分だけインデックスをずらす（範囲内に収める）
+                let nextGIdx = currentGIdx - step;
+                nextGIdx = Math.max(0, Math.min(groupKeys.length - 1, nextGIdx));
+
+                if (nextGIdx !== currentGIdx && nextGIdx !== lastGIdx) {
+                    lastGIdx = nextGIdx;
+                    const nextGroupName = groupKeys[nextGIdx];
+                    const nextIdx = PALETTE_MAP.findIndex(m => m.group === nextGroupName && m.cIdx === info.cIdx);
+                    state.focusIdx = nextIdx !== -1 ? nextIdx : PALETTE_MAP.findIndex(m => m.group === nextGroupName);
+                    
+                    // 開始地点をリセットして連続的に動かせるようにする
+                    headerSwipeStart = x; 
+                    
+                    updateCache();
+                    updateUI(state.focusIdx);
+                    requestDraw();
+                }
+            }
+        };
+
+        header.onmousedown = (e) => { headerSwipeStart = e.clientX; lastGIdx = -1; };
+        window.addEventListener('mousemove', (e) => { if(headerSwipeStart !== null) handleMove(e.clientX); });
+        window.addEventListener('mouseup', () => { headerSwipeStart = null; });
+
+        header.ontouchstart = (e) => { headerSwipeStart = e.touches[0].clientX; lastGIdx = -1; };
+        header.ontouchmove = (e) => { handleMove(e.touches[0].clientX); };
+        header.ontouchend = () => { headerSwipeStart = null; };
+        
+        header.dataset.swipeBound = "true";
+    }
     panel.classList.add('is-visible');
 
     const info = PALETTE_MAP[idx];
     const groupKeys = Object.keys(RAW_PALETTE);
     const gIdx = groupKeys.indexOf(info.group);
 
-    // ヘッダーの更新（5個並べるロジック）
+// ヘッダーの更新（5個並べるロジック）
     header.innerHTML = '';
+    header.style.cursor = 'ew-resize'; // 左右に動かせることを示すカーソル
+    header.style.userSelect = 'none';   // テキスト選択を防いで操作を快適に
     // 1. 左端 (2つ前)
     const farLeft = gIdx > 1 ? RAW_PALETTE[groupKeys[gIdx - 2]].Header : null;
     header.appendChild(createNavChip(farLeft, 'far-left'));
