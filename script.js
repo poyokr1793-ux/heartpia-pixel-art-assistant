@@ -637,11 +637,10 @@ render = function() {
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(state.cacheCanvas, drawX, drawY, totalW, totalH);
 
-  // グリッド表示フラグがONの時のみ、全てのグリッド（外枠・太線・細線）を描画する
-    if (showGrid) {
-        // ズーム倍率が低い時は細い線のみ省略される既存のロジックは renderGrid 側で保持されます
-        renderGrid(drawX, drawY, dotSize, totalW, totalH);
-    }
+// グリッド表示フラグがONかつ、一定以上拡大された時のみグリッドを描画する
+if (showGrid && state.scale >= 1.5) {
+renderGrid(drawX, drawY, dotSize, totalW, totalH);
+}
 
     // 選択色強調がONの時だけ、白い外周線を描画する
     if (state.enableFocusEffect) {
