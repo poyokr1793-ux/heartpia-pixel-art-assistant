@@ -137,20 +137,26 @@ function updateCache() {
 
         // 各モードの特殊処理を適用
         if (state.currentMode === 'smooth') {
-            ({ r, g, b } = ModeProcessor.applySmooth(i, r, g, b, imgData, state.w, state.h, errors));
-        } else if (state.currentMode === 'clean') {
-            ({ r, g, b } = ModeProcessor.applyClean(i, r, g, b, imgData, state.w, state.h));
+            r = Math.max(0, Math.min(255, r + errors[i4]));
+            g = Math.max(0, Math.min(255, g + errors[i4 + 1]));
+            b = Math.max(0, Math.min(255, b + errors[i4 + 2]));
+     } else if (state.currentMode === 'clean') {
+            // きれい：iなどの情報は不要になったので、r, g, bのみ渡す
+            ({ r, g, b } = ModeProcessor.applyClean(r, g, b));
         } else if (state.currentMode === 'sharp') {
-            ({ r, g, b } = ModeProcessor.applySharp(r, g, b));
+            // くっきり：周囲のピクセル情報が必要なので、iやimgDataを渡す
+            ({ r, g, b } = ModeProcessor.applySharp(i, r, g, b, imgData, state.w, state.h));
         }
 
         let minDist = Infinity, closestIdx = 0;
         for (let j = 0; j < paletteLen; j++) {
             const p = FLAT_PALETTE[j];
             let d;
-            if (state.currentMode === 'clean') {
-                // 「きれい」モード：緑(G)の重みを増やして、色の濁りを抑える
-                d = Math.pow(r - p[0], 2) + Math.pow(g - p[1], 2) * 1.5 + Math.pow(b - p[2], 2);
+      if (state.currentMode === 'clean') {
+                // 人の目が敏感な「明るさ」の差を重視して、ドットの輪郭をすっきりさせます
+                const rDiff = r - p[0], gDiff = g - p[1], bDiff = b - p[2];
+                const yDiff = (rDiff * 0.299 + gDiff * 0.587 + bDiff * 0.114);
+                d = (rDiff * rDiff + gDiff * gDiff + bDiff * bDiff) + (yDiff * yDiff * 2);
             } else {
                 // 標準：全ての色の差を均等に扱う
                 d = Math.pow(r - p[0], 2) + Math.pow(g - p[1], 2) + Math.pow(b - p[2], 2);

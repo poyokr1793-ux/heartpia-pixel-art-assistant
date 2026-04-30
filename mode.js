@@ -25,8 +25,19 @@ const ModeProcessor = {
         };
     },
 
-    // 「きれい」モード：輪郭の強調
-    applyClean: (i, r, g, b, imgData, w, h) => {
+ // 「きれい」モード：彩度を上げて色を整理（以前の「くっきり」の計算をそのまま持ってくる）
+    applyClean: (r, g, b) => {
+        const avg = (r + g + b) / 3;
+        const saturation = 1.15; // 鮮やかさの倍率
+        return {
+            r: Math.max(0, Math.min(255, avg + (r - avg) * saturation)),
+            g: Math.max(0, Math.min(255, avg + (g - avg) * saturation)),
+            b: Math.max(0, Math.min(255, avg + (b - avg) * saturation))
+        };
+    },
+
+    // 「くっきり」モード：エッジ強調で輪郭を鋭く（以前の「きれい」の計算をそのまま持ってくる）
+    applySharp: (i, r, g, b, imgData, w, h) => {
         const x = i % w;
         const y = Math.floor(i / w);
         if (x > 0 && x < w - 1 && y > 0 && y < h - 1) {
@@ -53,19 +64,6 @@ const ModeProcessor = {
         return { r, g, b };
     },
 
-    // 「くっきり」モード：ハイコントラスト
-    applySharp: (r, g, b) => {
-        const contrast = 1.3;
-        r = Math.max(0, Math.min(255, (r - 128) * contrast + 128));
-        g = Math.max(0, Math.min(255, (g - 128) * contrast + 128));
-        b = Math.max(0, Math.min(255, (b - 128) * contrast + 128));
-        return {
-            r: Math.min(255, r * 1.1),
-            g: Math.min(255, g * 1.1),
-            b: Math.min(255, b * 1.1)
-        };
-    },
-
     // 「なめらか」モード：仕上げのノイズ除去
     cleanupSmooth: (dots, w, h) => {
         const cleanedDots = new Int32Array(dots);
@@ -82,14 +80,28 @@ const ModeProcessor = {
                     }
                 }
             }
-            let maxCount = 0, dominantIdx = dots[i];
+         let maxCount = 0, dominantIdx = dots[i];
             for (const [idx, count] of Object.entries(counts)) {
                 if (count > maxCount) {
                     maxCount = count;
                     dominantIdx = parseInt(idx);
                 }
             }
-            if (counts[dots[i]] <= 2) cleanedDots[i] = dominantIdx;
+            
+            // 周辺との色の差（重要度）を簡易計算し、ディテールを保護する
+            const centerRGB = FLAT_PALETTE[dots[i]];
+            let edgeScore = 0;
+            [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx, dy]) => {
+                const nx = x + dx, ny = y + dy;
+                if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                    const neighborRGB = FLAT_PALETTE[dots[ny * w + nx]];
+                    edgeScore += Math.abs(centerRGB[0] - neighborRGB[0]) + Math.abs(centerRGB[1] - neighborRGB[1]) + Math.abs(centerRGB[2] - neighborRGB[2]);
+                }
+            });
+
+            // 重要度が高い（edgeScoreが大きい）場所は、周囲に合わせず元のドットを維持しやすくする
+            const threshold = edgeScore > 100 ? 1 : 2; 
+            if (counts[dots[i]] <= threshold) cleanedDots[i] = dominantIdx;
         }
         return cleanedDots;
     }
