@@ -514,13 +514,17 @@ body {
     display: block;
 }
 
-/* 2層目（中間）：中身の色。枠線からはみ出さないよう、わずかに小さく配置 */
+/* 2層目（中間）：中身の色。グラデーションを重ねて「ぷっくり」した立体感を出す */
 .color-box::before {
     content: "";
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: var(--color-code);
+    /* 斜め上から光、右下に影が落ちるような2つのグラデーションを重ね掛け */
+    background: 
+        linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 40%),
+        linear-gradient(315deg, rgba(0,0,0,0.2) 0%, transparent 40%),
+        var(--color-code);
     -webkit-mask-image: url('53_20260429110443.svg');
     mask-image: url('53_20260429110443.svg');
     -webkit-mask-size: contain;
