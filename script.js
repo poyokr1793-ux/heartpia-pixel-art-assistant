@@ -597,7 +597,57 @@ window.addEventListener('resize', () => {
 });
 
 document.getElementById('imageInput').onchange = e => processImage(e.target.files[0]);
+
+// グリッドON/OFF切り替え
+let showGrid = true;
+const gridBtn = document.getElementById('gridToggleBtn');
+gridBtn.onclick = () => {
+    showGrid = !showGrid;
+    gridBtn.textContent = `グリッド: ${showGrid ? 'ON' : 'OFF'}`;
+    requestDraw();
+};
+
+// 強調ON/OFF切り替え
+const focusBtn = document.getElementById('focusToggleBtn');
+focusBtn.onclick = () => {
+    state.enableFocusEffect = !state.enableFocusEffect;
+    focusBtn.textContent = `選択色強調: ${state.enableFocusEffect ? 'ON' : 'OFF'}`;
+    updateCache();
+    requestDraw();
+};
+
 updateResButtons("16:9");
+
+// render関数内のグリッド描画条件を修正
+render = function() {
+    const vW = viewport.clientWidth;
+    const vH = viewport.clientHeight;
+    if (canvas.width !== vW || canvas.height !== vH) {
+        canvas.width = vW; canvas.height = vH;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!state.dots || !state.cacheCanvas) return;
+
+    const dotSize = state.baseDotSize * state.scale;
+    const drawX = Math.round(state.offsetX);
+    const drawY = Math.round(state.offsetY);
+    const totalW = state.w * dotSize;
+    const totalH = state.h * dotSize;
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(state.cacheCanvas, drawX, drawY, totalW, totalH);
+
+  // グリッド表示フラグがONの時のみ、全てのグリッド（外枠・太線・細線）を描画する
+    if (showGrid) {
+        // ズーム倍率が低い時は細い線のみ省略される既存のロジックは renderGrid 側で保持されます
+        renderGrid(drawX, drawY, dotSize, totalW, totalH);
+    }
+
+    // 選択色強調がONの時だけ、白い外周線を描画する
+    if (state.enableFocusEffect) {
+        renderFocusHighlight(drawX, drawY, dotSize);
+    }
+};
 // ==========================================
 // 7. メッセージ送信機能 (Discord Webhook)
 // ==========================================
